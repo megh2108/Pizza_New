@@ -351,6 +351,16 @@ router.get('/getcart', Authenticate, async (req, res) => {
     }
 })
 
+router.get('/gettoppings', async (req, res) => {
+    try {
+      const toppings = await Toping.find();
+      res.json(toppings);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  });
+
 router.post('/addItem', Authenticate, async (req, res) => {
     try {
 

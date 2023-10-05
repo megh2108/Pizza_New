@@ -1,9 +1,23 @@
-import React,{useState,useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import './Cart.css'
 
 const Cart = () => {
 
     const [cartItems, setCartItems] = useState([]);
+    const [toppings, setToppings] = useState([]); // State to store fetched toppings
+    const [userData, setUserData] = useState([]);
+
+    const [quantity, setQuantity] = useState();
+
+    const decrementQuantity = () => {
+        if (quantity > 1) {
+            setQuantity(quantity - 1);
+        }
+    };
+
+    const incrementQuantity = () => {
+        setQuantity(quantity + 1);
+    };
 
     const callGetCart = async () => {
         try {
@@ -24,18 +38,88 @@ const Cart = () => {
                 throw error;
             }
 
-            // Set the cart items in state
             setCartItems(res.items);
         } catch (err) {
             console.log(err);
-            // Handle errors as needed
         }
     };
 
     useEffect(() => {
-        // Call the API to fetch cart data when the component mounts
         callGetCart();
     }, []);
+
+    const fetchToppings = async () => {
+        try {
+            const response = await fetch('/gettoppings'); // Change the URL to match your API route
+            const data = await response.json();
+            setToppings(data);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        callGetCart();
+        fetchToppings(); // Fetch toppings when the component mounts
+    }, []);
+
+    const callMenuPage = async () => {
+        try {
+            const response = await fetch("/getpizza", {
+                method: "GET",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                },
+                credentials: "include"
+            });
+
+            const res = await response.json();
+            console.log(res);
+            setUserData(res);
+
+            if (!response.ok) {
+                const error = new Error(res.error);
+                throw error;
+            }
+        } catch (err) {
+            console.log(err);
+            //   navigate("/login");
+        }
+    }
+
+    useEffect(() => {
+        callMenuPage();
+    }, []);
+
+    const placeOrder = async () => {
+        try {
+            const response = await fetch('/order', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include', 
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to place the order');
+            }
+
+            console.log('Order placed successfully:', data.message);
+            window.alert('Order placed successfully');
+
+        } catch (error) {
+            console.error('Error placing order:', error.message);
+            window.alert('Order not placed successfully');
+
+        }
+    };
+
+    
 
     return (
         <>
@@ -45,155 +129,12 @@ const Cart = () => {
                     <p>Your Cart</p>
                 </div>
                 <div class="container">
-                    <div class="col-lg-9">
-                        <div class="card mb-3">
-                            <div class="row g-0">
-                                <div class="col-md-4">
-                                    <img src="assets/img/italianpizza.jpg" class="img-fluid rounded-start" alt="..." />
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <div class="row ">
-                                            <h5 class="card-title col-lg-4">Italian Pizza</h5>
-                                            <p class="card-text col-lg-8 mt-3">Tis is a Italian Pizza with test.</p>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-lg-4">
-                                                <label for="inputState" class="form-label">Size</label>
-                                                <select id="inputState" class="form-select">
-                                                    <option>Small</option>
-                                                    <option>Medium</option>
-                                                    <option>Large</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-2">
-                                                <label for="yourSecretKey" className="form-label">Price</label>
-                                                {/* <input type="text" name="secretkey" className="form-control" id="yourSecretKey" required /> */}
-                                                <h5 class="card-text">56</h5>
-
-                                            </div>
-                                            <div class="col-lg-3 mt-4">
-                                                <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                                    <button type="button" class="btn btn-outline-primary">-</button>
-                                                    <input type="password" name="password" className="form-control" id="yourPassword" placeholder='1' required />
-                                                    <button type="button" class="btn btn-outline-primary">+</button>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-2 ">
-
-                                                <label for="yourSecretKey" className="form-label">Total Price</label>
-                                                {/* <input type="text" name="secretkey" className="form-control" id="yourSecretKey" required /> */}
-                                                <h5 class="card-text">56</h5>
-                                            </div>
-                                        </div>
-                                        <div class="form-check">
-                                            <h5 class="card-text">Toppings</h5>
-                                            <div class="row">
-                                                <div class="col-lg-2">
-                                                    <label class="form-check-label" for="gridCheck1">
-                                                        <input class="form-check-input" type="checkbox" id="gridCheck1" />
-                                                        Cheese
-                                                    </label>
-                                                </div>
-                                                <div class="col-lg-2">
-                                                    <label class="form-check-label" for="gridCheck1">
-                                                        <input class="form-check-input" type="checkbox" id="gridCheck1" />
-                                                        Butter
-                                                    </label>
-                                                </div>
-                                                <div class="col-lg-2">
-                                                    <label class="form-check-label" for="gridCheck1">
-                                                        <input class="form-check-input" type="checkbox" id="gridCheck1" />
-                                                        Extra Butter
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="col-lg-9">
-                        <div class="card mb-3">
-                            <div class="row g-0">
-                                <div class="col-md-4">
-                                    <img src="assets/img/italianpizza.jpg" class="img-fluid rounded-start" alt="..." />
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <div class="row ">
-                                            <h5 class="card-title col-lg-4">Italian Pizza</h5>
-                                            <p class="card-text col-lg-8 mt-3">Tis is a Italian Pizza with test.</p>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-lg-4">
-                                                <label for="inputState" class="form-label">Size</label>
-                                                <select id="inputState" class="form-select">
-                                                    <option>Small</option>
-                                                    <option>Medium</option>
-                                                    <option>Large</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-2">
-                                                <label for="yourSecretKey" className="form-label">Price</label>
-                                                {/* <input type="text" name="secretkey" className="form-control" id="yourSecretKey" required /> */}
-                                                <h5 class="card-text">56</h5>
-
-                                            </div>
-                                            <div class="col-lg-3 mt-4">
-                                                <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                                    <button type="button" class="btn btn-outline-primary">-</button>
-                                                    <input type="password" name="password" className="form-control" id="yourPassword" placeholder='1' required />
-                                                    <button type="button" class="btn btn-outline-primary">+</button>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-2 ">
-
-                                                <label for="yourSecretKey" className="form-label">Total Price</label>
-                                                {/* <input type="text" name="secretkey" className="form-control" id="yourSecretKey" required /> */}
-                                                <h5 class="card-text">56</h5>
-                                            </div>
-                                        </div>
-                                        <div class="form-check">
-                                            <h5 class="card-text">Toppings</h5>
-                                            <div class="row">
-                                                <div class="col-lg-2">
-                                                    <label class="form-check-label" for="gridCheck1">
-                                                        <input class="form-check-input" type="checkbox" id="gridCheck1" />
-                                                        Cheese
-                                                    </label>
-                                                </div>
-                                                <div class="col-lg-2">
-                                                    <label class="form-check-label" for="gridCheck1">
-                                                        <input class="form-check-input" type="checkbox" id="gridCheck1" />
-                                                        Butter
-                                                    </label>
-                                                </div>
-                                                <div class="col-lg-2">
-                                                    <label class="form-check-label" for="gridCheck1">
-                                                        <input class="form-check-input" type="checkbox" id="gridCheck1" />
-                                                        Extra Butter
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
                     {cartItems.map((item) => (
-                        <div class="col-lg-9" key={item._id}>
+
+                        <div class="col-lg-9" key={item._id} >
                             <div class="card mb-3">
                                 <div class="row g-0">
-                                    {/* Render cart item details here */}
                                     <div class="col-md-4">
-                                        {/* Render item image */}
                                         <img
                                             src="assets/img/italianpizza.jpg"
                                             class="img-fluid rounded-start"
@@ -204,6 +145,7 @@ const Cart = () => {
                                         <div class="card-body">
                                             <div class="row">
                                                 <h5 class="card-title col-lg-4">{item.itemName}</h5>
+
                                                 <p class="card-text col-lg-8 mt-3">{item.description}</p>
                                             </div>
                                             <div class="row mb-3">
@@ -211,9 +153,9 @@ const Cart = () => {
                                                     <label for="inputState" class="form-label">
                                                         Size
                                                     </label>
+
                                                     <select id="inputState" class="form-select">
                                                         <option>{item.size}</option>
-                                                        {/* Add other size options here */}
                                                     </select>
                                                 </div>
                                                 <div class="col-lg-2">
@@ -222,11 +164,64 @@ const Cart = () => {
                                                     </label>
                                                     <h5 class="card-text">{item.price}</h5>
                                                 </div>
-                                                {/* Add quantity and total price here */}
+                                                <div class="col-lg-3 mt-4">
+                                                    <div class="btn-group" role="group" aria-label="Basic outlined example">
+                                                        <button type="button" class="btn btn-outline-primary" onClick={decrementQuantity}>-</button>
+                                                        {/* <input type="password" name="password" className="form-control" id="yourPassword" placeholder={item.quantity} required /> */}
+                                                        <input
+                                                            type="text"
+                                                            name="quantity"
+                                                            className="form-control"
+                                                            id="yourQuantity"
+                                                            value={item.quantity}
+                                                            readOnly
+                                                        />
+                                                        <button type="button" class="btn btn-outline-primary" onClick={incrementQuantity}>+</button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-2 ">
+
+                                                    <label for="yourSecretKey" className="form-label">Total Price</label>
+                                                    {/* <input type="text" name="secretkey" className="form-control" id="yourSecretKey" required /> */}
+                                                    <h5 class="card-text">{item.totalPrice}</h5>
+                                                </div>
                                             </div>
                                             <div class="form-check">
                                                 <h5 class="card-text">Toppings</h5>
                                                 {/* Render toppings checkboxes here */}
+                                                <div class="row">
+                                                    {/* <div class="col-lg-2">
+                                                        <label class="form-check-label" for="gridCheck1">
+                                                            <input class="form-check-input" type="checkbox" id="gridCheck1" />
+                                                            Cheese
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <label class="form-check-label" for="gridCheck1">
+                                                            <input class="form-check-input" type="checkbox" id="gridCheck1" />
+                                                            Butter
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <label class="form-check-label" for="gridCheck1">
+                                                            <input class="form-check-input" type="checkbox" id="gridCheck1" />
+                                                            Extra Butter
+                                                        </label>
+                                                    </div> */}
+                                                    {toppings.map((topping) => (
+                                                        <div className="col-lg-2" key={topping._id}>
+                                                            <label className="form-check-label" htmlFor={`topping-${topping._id}`}>
+                                                                <input
+                                                                    className="form-check-input"
+                                                                    type="checkbox"
+                                                                    id={`topping-${topping._id}`}
+                                                                    value={topping.toppingName}
+                                                                />
+                                                                {topping.toppingName}
+                                                            </label>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -235,13 +230,14 @@ const Cart = () => {
                         </div>
                     ))}
 
+
                     <div>
 
-                        <a href="#" class="btn btn-primary">Placed Order</a>
+                        {/* <a class="btn btn-primary" >Placed Order</a> */}
+                        <a class="btn btn-primary" onClick={placeOrder}>Placed Order</a>
                     </div>
                 </div>
-                {/* </div> */}
-            </section >
+            </section>
         </>
     )
 }
