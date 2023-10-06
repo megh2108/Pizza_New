@@ -7,14 +7,11 @@ const stripe = require("stripe")("sk_test_51NxuORSJjSNbQ9dejfeD3JHuIt1vy77zvDfMf
 
 
 require('../db/conn');
-const User = require('../model/userSchema');
+// const User = require('../model/userSchema');
 const Userss = require('../model/userSchemass');
-const Admin = require('../model/adminSchema');
+// const Admin = require('../model/adminSchema');
 const PizzaMenuItem = require('../model/pizzaMenuItemSchema');
-// const Pizza = require('../model/pizzaSchema');
-// const User1 = require('../model/user1Schema');
-// const MenuItem = require('../model/menuItemSchema');
-const Ingredient = require('../model/ingredientSchema');
+// const Ingredient = require('../model/ingredientSchema');
 const Offer = require('../model/offerSchema');
 const Order = require('../model/orderSchema');
 const OrderDetail = require('../model/orderDetailSchema');
@@ -24,7 +21,6 @@ const Shop = require('../model/shopSchema');
 const Toping = require('../model/topingSchema');
 
 
-// const Topping = require('../model/toppingSchema');
 
 
 router.get('/', (req, res) => {
@@ -32,18 +28,11 @@ router.get('/', (req, res) => {
 })
 
 router.post('/signin', async (req, res) => {
-    // console.log(req.body);
-    // res.json({message:req.body})
-
-    // for testing
-    // console.log(req.body.name);
-    // console.log(req.body.email);
 
     const { name, email, phone, password, cpassword } = req.body;
 
     console.log(req.body);
 
-    //  for validation purpose - if empty feild then error throw
     if (!name || !email || !phone || !password || !cpassword) {
 
         return res.status(422).json({ error: "please filled properly feild ." });
@@ -63,9 +52,6 @@ router.post('/signin', async (req, res) => {
 
             const user = new User({ name, email, phone, password, cpassword });
 
-            //if user is new then we save attribute , but before save we have to encrypt password feild using bcrypt.js
-            // presave method
-
             await user.save();
 
             res.status(201).json({ message: "user registerd successfully" });
@@ -84,19 +70,16 @@ router.post('/sign', async (req, res) => {
     const { name, email, phone, password, cpassword, type, secretKey, shopID } = req.body;
     console.log(req.body);
 
-    // Validate input fields
     if (!name || !email || !phone || !password || !cpassword || !type) {
         return res.status(422).json({ error: "Please fill in all required fields." });
     }
 
     try {
-        // Check if user already exists
         const userExist = await Userss.findOne({ email: email });
         if (userExist) {
             return res.status(422).json({ error: "User already exists." });
         }
 
-        // Check if password and confirm password match
         else if (password !== cpassword) {
             return res.status(422).json({ error: "Passwords do not match." });
         }
@@ -107,10 +90,8 @@ router.post('/sign', async (req, res) => {
             }
         }
 
-        // Create a new user
         const user = new Userss({ name, email, phone, password, cpassword, type, secretKey, shopID });
 
-        // Save the user to the database
         await user.save();
 
         res.status(201).json({ message: "User registered successfully." });
@@ -169,7 +150,6 @@ router.post('/login', async (req, res) => {
                     return res.status(201).json({ message: "User login successfully" });
                 }
 
-                // res.status(201).json({ message: "user login successfully" });
             }
 
 
@@ -191,11 +171,10 @@ router.post('/login', async (req, res) => {
 router.post('/addtocart', Authenticate, async (req, res) => {
     try {
 
-        if(req.status === 401){
-            // return res.status(401)
+        if (req.status === 401) {
             return res.status(401).json({ error: 'Please Login' });
 
-        }   
+        }
         const { itemName, size, quantity } = req.body;
         console.log("Item Name Received:", itemName);
         console.log("Size:", size);
@@ -205,14 +184,14 @@ router.post('/addtocart', Authenticate, async (req, res) => {
 
         const menuItem = await PizzaMenuItem.findOne({ itemName: itemName });
         console.log("Menu:", menuItem);
-        
-   
+
+
         if (!menuItem) {
             return res.status(404).json({ error: 'Menu item not found' });
         }
 
         const selectedSize = menuItem.sizes[size];
-        console.log("selectedSize",selectedSize);
+        console.log("selectedSize", selectedSize);
 
 
         if (!selectedSize) {
@@ -275,7 +254,6 @@ router.post('/order', Authenticate, async (req, res) => {
     try {
         const userId = req.rootUser._id;
 
-        // Find the user's cart
         const cart = await Cart.findOne({ userID: userId });
 
         if (!cart) {
@@ -329,11 +307,9 @@ router.get('/getorder', async (req, res) => {
         const Order_Record = await Order.find({});
 
         // console.log("data :",Order_Record);
-        // console.log("user :",Order_Record.userID);
         // const userIDs = Order_Record.map(order => order.userID);
         // console.log("User IDs:", userIDs);                              
 
-        // const pizzas = await Pizza.find({});
         res.json(Order_Record);
     } catch (err) {
         console.error('Error fetching data:', err);
@@ -345,12 +321,8 @@ router.get('/getorderdetail', async (req, res) => {
     try {
         const Order_Detail = await OrderDetail.find({});
 
-        console.log("data :",Order_Detail);
-        // console.log("user :",Order_Record.userID);
-        // const userIDs = Order_Record.map(order => order.userID);
-        // console.log("User IDs:", userIDs);                              
+        // console.log("data :",Order_Detail);
 
-        // const pizzas = await Pizza.find({});
         res.json(Order_Detail);
     } catch (err) {
         console.error('Error fetching data:', err);
@@ -379,29 +351,11 @@ router.put('/updateOrderStatus/:orderId', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-// Route to get order details by orderID
-// router.get('/getOrderDetail/:orderID', async (req, res) => {
-//     try {
-//         const orderID = req.params.orderID;
 
-//         // Find order details by orderID and populate the items
-//         const orderDetail = await OrderDetail.findOne({ orderID }).populate('items.menuItem');
-
-//         if (!orderDetail) {
-//             return res.status(404).json({ message: 'Order detail not found' });
-//         }
-
-//         res.json(orderDetail);
-//     } catch (err) {
-//         console.error('Error fetching order detail:', err);
-//         res.status(500).json({ error: 'Internal server error' });
-//     }
-// });
 
 router.get('/getpizza', async (req, res) => {
     try {
         const pizzas = await PizzaMenuItem.find({});
-        // const pizzas = await Pizza.find({});
         res.json(pizzas);
     } catch (err) {
         console.error('Error fetching data:', err);
@@ -413,12 +367,11 @@ router.get('/getcart', Authenticate, async (req, res) => {
     try {
 
         const userId = req.rootUser._id;
-        console.log("user:",userId)
+        console.log("user:", userId)
         const userEmail = req.rootUser.email;
-        console.log("email:",userEmail)
+        console.log("email:", userEmail)
 
-        const carts = await Cart.findOne({userID:userId});
-        // const pizzas = await Pizza.find({});
+        const carts = await Cart.findOne({ userID: userId });
         res.json(carts);
     } catch (err) {
         console.error('Error fetching data:', err);
@@ -428,34 +381,34 @@ router.get('/getcart', Authenticate, async (req, res) => {
 
 router.get('/gettoppings', async (req, res) => {
     try {
-      const toppings = await Toping.find();
-      res.json(toppings);
+        const toppings = await Toping.find();
+        res.json(toppings);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal Server Error' });
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
-  });
+});
 
 router.post('/addItem', Authenticate, async (req, res) => {
     try {
 
         const userId = req.rootUser._id;
-        console.log("user:",userId)
+        console.log("user:", userId)
         const userEmail = req.rootUser.email;
-        console.log("email:",userEmail)
+        console.log("email:", userEmail)
 
-        const { itemName, description, sizes,  image } = req.body;
+        const { itemName, description, sizes, image } = req.body;
 
         const admin = await Userss.findOne({ email: userEmail });
         // const admin = await Userss.findOne({ userID: userId });
-        console.log("admina:",admin);
+        console.log("admina:", admin);
         if (!admin || admin.type !== 'admin') {
             return res.status(404).json({ error: 'Admin not found' });
         }
 
 
         const newItem = new PizzaMenuItem({
-            shopID:admin.shopID,
+            shopID: admin.shopID,
             itemName,
             description,
             sizes,
@@ -470,8 +423,7 @@ router.post('/addItem', Authenticate, async (req, res) => {
     }
 });
 
-// Define the DELETE route for deleting a pizza menu item by ID
-router.delete('/deleteItems/:itemId',Authenticate, async (req, res) => {
+router.delete('/deleteItems/:itemId', Authenticate, async (req, res) => {
     const itemId = req.params.itemId;
 
     try {
@@ -482,7 +434,6 @@ router.delete('/deleteItems/:itemId',Authenticate, async (req, res) => {
             return res.status(404).json({ message: 'Pizza menu item not found' });
         }
 
-        // Item deleted successfully
         res.status(200).json({ message: 'Pizza menu item deleted successfully' });
     } catch (error) {
         console.error('Error deleting pizza menu item:', error);
@@ -490,7 +441,7 @@ router.delete('/deleteItems/:itemId',Authenticate, async (req, res) => {
     }
 });
 
-router.put('/updateItems/:itemId', Authenticate,async (req, res) => {
+router.put('/updateItems/:itemId', Authenticate, async (req, res) => {
     const { itemId } = req.params;
     const updateData = req.body;
 
@@ -515,8 +466,7 @@ router.put('/updateItems/:itemId', Authenticate,async (req, res) => {
 
 
 
-// Define the DELETE route for deleting a topping by ID
-router.delete('/deleteTopping/:itemId',Authenticate, async (req, res) => {
+router.delete('/deleteTopping/:itemId', Authenticate, async (req, res) => {
     const itemId = req.params.itemId;
 
     try {
@@ -527,7 +477,6 @@ router.delete('/deleteTopping/:itemId',Authenticate, async (req, res) => {
             return res.status(404).json({ message: 'Topping not found' });
         }
 
-        // Topping deleted successfully
         res.status(200).json({ message: 'Topping deleted successfully' });
     } catch (error) {
         console.error('Error deleting topping:', error);
@@ -535,8 +484,7 @@ router.delete('/deleteTopping/:itemId',Authenticate, async (req, res) => {
     }
 });
 
-// Define the PUT route for updating a topping by ID
-router.put('/updateToppings/:itemId',Authenticate, async (req, res) => {
+router.put('/updateToppings/:itemId', Authenticate, async (req, res) => {
     const { itemId } = req.params;
     const updateData = req.body;
 
@@ -559,7 +507,6 @@ router.put('/updateToppings/:itemId',Authenticate, async (req, res) => {
     }
 });
 
-// Route handler for getting pizza items with pagination
 router.get('/getItems', Authenticate, async (req, res) => {
     try {
         const { skip, limit } = req.query;
@@ -572,7 +519,8 @@ router.get('/getItems', Authenticate, async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-router.get('/getItemsss',Authenticate, async (req, res) => {
+
+router.get('/getItemsss', Authenticate, async (req, res) => {
     try {
         const TopingItems = await Toping.find();
 
@@ -582,7 +530,6 @@ router.get('/getItemsss',Authenticate, async (req, res) => {
     }
 });
 
-// Route to add a new topping
 router.post('/addTopping', Authenticate, async (req, res) => {
     try {
 
@@ -594,7 +541,6 @@ router.post('/addTopping', Authenticate, async (req, res) => {
         const { toppingName, price } = req.body;
 
         const admin = await Userss.findOne({ email: userEmail });
-        // const admin = await Userss.findOne({ userID: userId });
         console.log("admina:", admin);
         if (!admin || admin.type !== 'admin') {
             return res.status(404).json({ error: 'Admin not found' });
@@ -649,14 +595,14 @@ router.post('/create-checkout-session', async (req, res) => {
 
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
-        line_items:lineItems,
+        line_items: lineItems,
         mode: "payment",
         success_url: "http://localhost:3000/Cart",
         cancel_url: "http://localhost:3000/Cancel",
 
     })
 
-    res.json({id:session.id})
+    res.json({ id: session.id })
 
 });
 

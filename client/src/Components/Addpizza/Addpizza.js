@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { DataTable } from 'simple-datatables';
 import './Addpizza.css'
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify'; // Import toast from react-toastify
-import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for styling
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const Addpizza = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
-    // const [itemsPerPage] = useState(); // Number of items to display per page (changed to 10)
     const [items, setItems] = useState([]);
     const [updateMode, setUpdateMode] = useState(false);
     const [itemIdToUpdate, setItemIdToUpdate] = useState('');
@@ -25,10 +24,10 @@ const Addpizza = () => {
     });
 
     const navigate = useNavigate();
-   
+
 
     useEffect(() => {
-    
+
 
         fetch("/getItems", {
             method: "GET",
@@ -46,13 +45,11 @@ const Addpizza = () => {
     }, []);
 
 
-    // Function to handle form input changes
     const handleInputs = (e) => {
         const { name, value } = e.target;
         setItem({ ...item, [name]: value });
     };
 
-    // Function to handle price input changes for different sizes
     const handlePriceInputs = (e, size) => {
         const { name, value } = e.target;
         setItem({
@@ -68,7 +65,6 @@ const Addpizza = () => {
     };
 
     const handleUpdate = (item) => {
-        // Set the item details in the form for editing
         setUpdateMode(true);
         setItemIdToUpdate(item._id);
         setItem({
@@ -83,7 +79,6 @@ const Addpizza = () => {
         });
     };
 
-    // Function to cancel the update mode
     const handleCancelUpdate = () => {
         setUpdateMode(false);
         setItemIdToUpdate('');
@@ -99,13 +94,11 @@ const Addpizza = () => {
         });
     };
 
-    // Function to handle item update
     const handleUpdateItem = async (e) => {
         e.preventDefault();
 
         const { itemName, description, sizes, image } = item;
 
-        // Create an update request payload
         const updatePayload = {
             itemName,
             description,
@@ -114,7 +107,6 @@ const Addpizza = () => {
         };
 
         try {
-            // Send an update request to your server to update the item
             const response = await fetch(`/updateItems/${itemIdToUpdate}`, {
                 method: 'PUT',
                 headers: {
@@ -125,21 +117,17 @@ const Addpizza = () => {
             });
 
             if (response.status === 200) {
-                // Item updated successfully
                 console.log('Item updated successfully');
                 toast.success('Item updated successfully');
 
-                // Update the 'items' state with the updated item
                 const updatedItem = await response.json();
 
-                // Map over the existing items and replace the updated item
                 setItems((prevItems) =>
                     prevItems.map((prevItem) =>
                         prevItem._id === updatedItem._id ? updatedItem : prevItem
                     )
                 );
 
-                // Reset the state and exit update mode
                 setUpdateMode(false);
                 setItemIdToUpdate('');
                 setItem({
@@ -162,43 +150,34 @@ const Addpizza = () => {
                 toast.error('internal server error');
 
             } else {
-                // Handle update error
                 console.log('Failed to update item');
                 toast.error('Failed to update item');
             }
         } catch (error) {
             console.error('Error updating item:', error);
-            // Handle any other errors that may occur during updating
         }
     };
 
-    // Function to handle item deletion
     const handleDelete = async (itemId) => {
         try {
-            // Send a DELETE request to your server to delete the item with 'itemId'
             const response = await fetch(`/deleteItems/${itemId}`, {
                 method: "DELETE"
             });
 
             if (response.status === 200) {
-                // Item deleted successfully
                 console.log("Item deleted successfully");
                 toast.success("Item deleted successfully");
 
-                // Remove the deleted item from the 'items' state
                 setItems((prevItems) => prevItems.filter((item) => item._id !== itemId));
             } else {
-                // Handle delete error
                 console.log("Failed to delete item");
                 toast.error("Failed to delete item");
             }
         } catch (error) {
             console.error("Error deleting item:", error);
-            // Handle any other errors that may occur during deletion
         }
     };
 
-    // Function to convert an image to base64
     const convertToBase64 = (e) => {
         const reader = new FileReader();
         reader.onload = () => {
@@ -210,7 +189,6 @@ const Addpizza = () => {
         reader.readAsDataURL(e.target.files[0]);
     };
 
-    // Function to handle form submission for adding a new item
     const postData = async (e) => {
         e.preventDefault();
 
@@ -253,7 +231,6 @@ const Addpizza = () => {
     };
 
 
-    // Megh
     useEffect(() => {
         const datatables = document.querySelectorAll('.datatable');
 
@@ -276,7 +253,6 @@ const Addpizza = () => {
 
                                     <div className="pt-4 pb-2">
                                         <h5 className="card-title text-center pb-0 fs-4">{updateMode ? 'Update Pizza' : 'Add Pizza'}</h5>
-                                        {/* <h5 className="card-title text-center pb-0 fs-4">Add Pizza</h5> */}
                                         <p className="text-center small">Add Pizza from Admin Side</p>
                                     </div>
 
@@ -319,18 +295,11 @@ const Addpizza = () => {
                                             {item.image && <img width={100} height={100} src={item.image} alt="Preview" />}
                                         </div>
 
-                                        {/* <div className="col-12">
-                                            <button className="btn btn-primary w-100" type="submit">Add Pizza</button>
-                                        </div> */}
+
 
                                         {updateMode ? (
                                             <>
-                                                {/* <button className="btn" type="button" onClick={handleCancelUpdate} style={{ "margin": "10px" }}>
-                                                    Cancel Update
-                                                </button>
-                                                <button className="btn" type="button" onClick={handleUpdateItem} style={{ "margin": "10px" }}>
-                                                    Update Item
-                                                </button> */}
+
                                                 <div className="col-6">
                                                     <button className="btn btn-primary w-100" type="button" onClick={handleCancelUpdate}>Cancel Update</button>
                                                 </div>
@@ -341,9 +310,7 @@ const Addpizza = () => {
                                         ) : (
                                             <>
 
-                                                {/* <button className="btn" type="button" onClick={postData}>
-                                        Add Pizza
-                                    </button> */}
+
                                                 <div className="col-12">
                                                     <button className="btn btn-primary w-100" type="button" onClick={postData}>Add Pizza</button>
                                                 </div>
@@ -365,49 +332,50 @@ const Addpizza = () => {
 
 
                                     <h5 class="card-title">Records of Pizzaa</h5>
-                                    {/* <p>Add lightweight datatables to your project with using the <a href="https://github.com/fiduswriter/Simple-DataTables" target="_blank">Simple DataTables</a> library. Just add <code>.datatable</code> class name to any table you wish to conver to a datatable</p> */}
+                                    <div className="table-responsive">
 
-                                    <table class="table table-bordered table-sm datatable ">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Sr No.</th>
-                                                <th scope="col">Name</th>
-                                                <th scope="col">Description</th>
-                                                <th scope="col">Small Price</th>
-                                                <th scope="col">Medium Price</th>
-                                                <th scope="col">Large Price</th>
-                                                <th scope="col">Update</th>
-                                                <th scope="col">Delete</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                          
-                                            {items.map((item, index) => (
-                                                <tr key={item._id}>
-                                                    <th scope="row">{index+1}</th>
-                                                    <td>{item.itemName}</td>
-                                                    <td>{item.description}</td>
-                                                    <td>Rs.{item.sizes.small.price}</td>
-                                                    <td>Rs.{item.sizes.medium.price}</td>
-                                                    <td>Rs.{item.sizes.large.price}</td>
-                                                    <td>
-                                                        <button className="btn btn-primary w-100" type="button" onClick={() => handleUpdate(item)}>Update</button>
-                                                    </td>
-                                                    <td>
-                                                        <button className="btn btn-primary w-100" type="button" onClick={() => handleDelete(item._id)}>Delete</button>
-
-                                                    </td>
+                                        <table class="table table-bordered table-sm datatable ">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Sr No.</th>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Description</th>
+                                                    <th scope="col">Small Price</th>
+                                                    <th scope="col">Medium Price</th>
+                                                    <th scope="col">Large Price</th>
+                                                    <th scope="col">Update</th>
+                                                    <th scope="col">Delete</th>
                                                 </tr>
-                                            ))}
+                                            </thead>
+                                            <tbody>
 
-                                        </tbody>
-                                    </table>
+                                                {items.map((item, index) => (
+                                                    <tr key={item._id}>
+                                                        <th scope="row">{index + 1}</th>
+                                                        <td>{item.itemName}</td>
+                                                        <td>{item.description}</td>
+                                                        <td>Rs.{item.sizes.small.price}</td>
+                                                        <td>Rs.{item.sizes.medium.price}</td>
+                                                        <td>Rs.{item.sizes.large.price}</td>
+                                                        <td>
+                                                            <button className="btn btn-primary w-100" type="button" onClick={() => handleUpdate(item)}>Update</button>
+                                                        </td>
+                                                        <td>
+                                                            <button className="btn btn-primary w-100" type="button" onClick={() => handleDelete(item._id)}>Delete</button>
 
+                                                        </td>
+                                                    </tr>
+                                                ))}
+
+                                            </tbody>
+                                        </table>
+
+                                    </div>
                                 </div>
+
                             </div>
 
                         </div>
-
                     </div>
                 </div>
 

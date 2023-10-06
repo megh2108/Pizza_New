@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { UserContext } from '../../App';
-import { toast } from 'react-toastify'; // Import toast
+import { toast } from 'react-toastify'; 
 import 'react-toastify/dist/ReactToastify.css';
 const Login = () => {
     const { state, dispatch } = useContext(UserContext);
@@ -27,14 +27,14 @@ const Login = () => {
       const data = await res.json();
   
       if (res.status === 400 || !data) {
-        toast.error("Invalid Login"); // Display an error toast
+        toast.error("Invalid Login"); 
       } else if (res.status === 200) {
         dispatch({ type: "ADMIN", payload: true });
-        toast.success("Successfully Logged In"); // Display a success toast
+        toast.success("Admin Successfully Logged In"); 
         navigate("/Dashboard");
       } else {
         dispatch({ type: "USER", payload: true });
-        toast.success("Successfully Logged In"); // Display a success toast
+        toast.success("User Successfully Logged In"); 
         navigate("/Home");
       }
   

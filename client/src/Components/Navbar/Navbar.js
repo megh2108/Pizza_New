@@ -25,7 +25,7 @@ const scrollto = (hash) => {
     let header = select('#header');
     let offset = header.offsetHeight;
 
-    let cleanedHash = hash.replace('/', ''); // Remove the leading forward slash
+    let cleanedHash = hash.replace('/', '');
     let element = select(cleanedHash);
 
     if (element) {
@@ -42,12 +42,10 @@ const Navbar = () => {
     const { state, dispatch } = useContext(UserContext);
     const isAdmin = state && state.isAdmin;
 
-    // Add console.log here to check the value of isAdmin
     console.log('isAdmin:', isAdmin);
 
 
     useEffect(() => {
-        // Easy selector helper function
         const select = (el, all = false) => {
             el = el.trim()
             if (all) {
@@ -57,7 +55,6 @@ const Navbar = () => {
             }
         }
 
-        // Easy event listener function
         const on = (type, el, listener, all = false) => {
             if (all) {
                 select(el, all).forEach(e => e.addEventListener(type, listener))
@@ -66,26 +63,22 @@ const Navbar = () => {
             }
         }
 
-        // Easy on scroll event listener 
         const onscroll = (el, listener) => {
             el.addEventListener('scroll', listener)
         }
 
-        // Sidebar toggle
         if (select('.toggle-sidebar-btn')) {
             on('click', '.toggle-sidebar-btn', function (e) {
                 select('body').classList.toggle('toggle-sidebar')
             })
         }
 
-        // Search bar toggle
         if (select('.search-bar-toggle')) {
             on('click', '.search-bar-toggle', function (e) {
                 select('.search-bar').classList.toggle('search-bar-show')
             })
         }
 
-        // Navbar links active state on scroll
         let navbarlinks = select('#navbar .scrollto', true)
         const navbarlinksActive = () => {
             let position = window.scrollY + 200
@@ -103,7 +96,6 @@ const Navbar = () => {
         window.addEventListener('load', navbarlinksActive)
         onscroll(document, navbarlinksActive)
 
-        // Toggle .header-scrolled class to #header when page is scrolled
         let selectHeader = select('#header')
         if (selectHeader) {
             const headerScrolled = () => {
@@ -122,7 +114,6 @@ const Navbar = () => {
     useEffect(() => {
 
 
-        // moble navbar active
         const handleClick = (e) => {
             const clickedElement = e.target;
             const navbar = select('#header-nav');
@@ -133,21 +124,21 @@ const Navbar = () => {
                 clickedElement.classList.toggle('bi-x');
             }
 
-            if (clickedElement.matches('.header-nav .nav-link')) {
+            if (clickedElement.matches('.navbar a')) {
                 navbar.classList.remove('navbar-mobile');
                 let navbarToggle = select('.mobile-nav-toggle');
                 navbarToggle.classList.toggle('bi-list');
                 navbarToggle.classList.toggle('bi-x');
             }
 
-            // if (clickedElement.matches('.header-nav .dropdown > .abc')) {
-            //     const navbar = select('#navbar');
+            if (clickedElement.matches('.navbar .dropdown > .abc')) {
+                const navbar = select('#navbar');
 
-            //     if (navbar.classList.contains('navbar-mobile')) {
-            //         e.preventDefault();
-            //         clickedElement.nextElementSibling.classList.toggle('dropdown-active');
-            //     }
-            // }
+                if (navbar.classList.contains('navbar-mobile')) {
+                    e.preventDefault();
+                    clickedElement.nextElementSibling.classList.toggle('dropdown-active');
+                }
+            }
 
             if (clickedElement.matches('.scrollto')) {
                 const targetHash = clickedElement.getAttribute('to');
@@ -190,8 +181,7 @@ const Navbar = () => {
                         <img src="assets/img/logo.png" alt="" />
                         <span className="d-none d-lg-block">Cheesy Pizza</span>
                     </NavLink>
-                    {/* <i className="bi bi-list toggle-sidebar-btn"></i> */}
-                    {/* <i className="bi bi-list toggle-sidebar-btn" aria-label="Toggle Sidebar" role="button" tabIndex="0"></i> */}
+
                 </div>
 
                 <div className="search-bar">
@@ -206,22 +196,22 @@ const Navbar = () => {
 
                         <li class="nav-item  pe-3">
                             <NavLink class="nav-link" to="/" >
-                                <span class="d-none d-md-block ps-2">Home</span>
+                                <span >Home</span>
                             </NavLink>
                         </li>
                         <li class="nav-item  pe-3">
                             <NavLink class="nav-link" to="/About" >
-                                <span class="d-none d-md-block ps-2">About</span>
+                                <span >About</span>
                             </NavLink>
                         </li>
                         <li class="nav-item  pe-3">
                             <NavLink class="nav-link" to="/Menu" >
-                                <span class="d-none d-md-block ps-2">Menu</span>
+                                <span >Menu</span>
                             </NavLink>
                         </li>
                         <li class="nav-item  pe-3">
                             <NavLink class="nav-link" to="/Contact" >
-                                <span class="d-none d-md-block ps-2">Contact Us</span>
+                                <span >Contact Us</span>
                             </NavLink>
                         </li>
                         {state ? (
@@ -229,19 +219,19 @@ const Navbar = () => {
 
                                 <li class="nav-item  pe-3">
                                     <NavLink class="nav-link" to="/Cart" >
-                                        <span class="d-none d-md-block ps-2">Cart</span>
+                                        <span >Cart</span>
                                     </NavLink>
                                 </li>
                                 {isAdmin && (
-                                <li class="nav-item  pe-3">
-                                    <NavLink class="nav-link" to="/Dashboard" >
-                                        <span class="d-none d-md-block ps-2">Dashboard</span>
-                                    </NavLink>
-                                </li>
-                                   )}
+                                    <li class="nav-item  pe-3">
+                                        <NavLink class="nav-link" to="/Dashboard" >
+                                            <span >Dashboard</span>
+                                        </NavLink>
+                                    </li>
+                                )}
                                 <li class="nav-item  pe-3">
                                     <NavLink class="nav-link" to="/Logout" >
-                                        <span class="d-none d-md-block ps-2">Logout</span>
+                                        <span >Logout</span>
                                     </NavLink>
                                 </li>
                             </>
@@ -250,21 +240,22 @@ const Navbar = () => {
 
                                 <li class="nav-item  pe-3">
                                     <NavLink class="nav-link" to="/Signup" >
-                                        <span class="d-none d-md-block ps-2">Register</span>
+                                        <span >Register</span>
                                     </NavLink>
                                 </li>
                                 <li class="nav-item  pe-3">
                                     <NavLink class="nav-link" to="/Login" >
-                                        <span class="d-none d-md-block ps-2">Login</span>
+                                        <span >Login</span>
                                     </NavLink>
                                 </li>
                             </>
                         )}
 
                     </ul>
+                    <i className="bi bi-list mobile-nav-toggle"></i>
+
                 </nav>
-                <i className="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
-                <i className="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
 
             </header>
         </>

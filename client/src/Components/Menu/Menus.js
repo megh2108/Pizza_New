@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Menu.css';
 import { useNavigate } from 'react-router-dom';
-import PizzaCard from './Pizzacard'; // Import the PizzaCard component
+import PizzaCard from './Pizzacard'; 
 
 const Menus = () => {
     const navigate = useNavigate();
@@ -55,7 +55,7 @@ const Menus = () => {
 
                         <li className="nav-item">
                             <a className="nav-link" data-bs-toggle="tab" data-bs-target="#menu-sendwiches">
-                                <h4>Sendwiches</h4>
+                                <h4>Sandwiches</h4>
                             </a>
                         </li>
 
@@ -73,10 +73,6 @@ const Menus = () => {
                     <div className="tab-content" data-aos="fade-up" data-aos-delay="300">
 
                         <div className="tab-pane fade active show" id="menu-pizzas">
-
-                            {/* <div className="tab-header text-center">
-                                <h3>Pizza</h3>
-                            </div> */}
 
 
                             <div className="row">

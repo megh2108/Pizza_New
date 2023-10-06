@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify'; // Import toast
+import { toast } from 'react-toastify'; 
 import 'react-toastify/dist/ReactToastify.css';
 
 const PizzaCard = ({ pizza }) => {
@@ -23,8 +23,7 @@ const PizzaCard = ({ pizza }) => {
     const addToCart = async () => {
         const data = {
             itemName: pizza.itemName,
-            // size: 'small', 
-            size: selectedSize,  // Dynamically get selected size
+            size: selectedSize,  
             quantity: quantity
         };
 
@@ -82,20 +81,6 @@ const PizzaCard = ({ pizza }) => {
                         <div className="col-lg-6">
                             <label htmlFor="inputSize" className="form-label">Size</label>
 
-                            {/* <select
-                                id="inputSize"
-                                className="form-select"
-                                defaultValue={selectedSize}
-                                onChange={(e) => {
-                                    setSelectedSize(e.target.value);
-                                }
-                                }
-
-                            >
-                                <option value="small">Small</option>
-                                <option value="medium">Medium</option>
-                                <option value="large">Large</option>
-                            </select> */}
                             <select
                                 id="inputSize"
                                 className="form-select"
@@ -113,7 +98,6 @@ const PizzaCard = ({ pizza }) => {
                         </div>
                         <div className="col-lg-6">
                             <label htmlFor="yourPrice" className="form-label">Price</label>
-                            {/* <h5 className="card-text">56</h5> */}
                             <h5 className="card-text">{pizza.sizes[selectedSize].price}</h5>
 
                         </div>

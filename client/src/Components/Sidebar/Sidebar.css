@@ -2,7 +2,9 @@
 # Sidebar
 --------------------------------------------------------------*/
 .sidebar {
-    position: fixed;
+    /* position: fixed; */
+    position:absolute;
+    min-height: 100vh;
     top: 60px;
     left: 0;
     bottom: 0;

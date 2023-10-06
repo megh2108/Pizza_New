@@ -2,8 +2,8 @@ import React, { useState, useContext, useEffect } from 'react'
 import './Addtopping.css'
 import { DataTable } from 'simple-datatables';
 import { NavLink, useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'; // Import toast from react-toastify
-import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for styling
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const Addtopping = () => {
@@ -13,8 +13,8 @@ const Addtopping = () => {
     const [items, setItems] = useState([]);
 
 
-    const [updateMode, setUpdateMode] = useState(false); // Track update mode
-    const [itemIdToUpdate, setItemIdToUpdate] = useState(null); // Track the item being updated
+    const [updateMode, setUpdateMode] = useState(false);
+    const [itemIdToUpdate, setItemIdToUpdate] = useState(null);
 
     useEffect(() => {
 
@@ -186,18 +186,10 @@ const Addtopping = () => {
                                             />
                                         </div>
 
-                                        {/* <div className="col-12">
-                                            <button className="btn btn-primary w-100" type="submit">Add Topping</button>
-                                        </div> */}
 
                                         {updateMode ? (
                                             <>
-                                                {/* <button className="btn" type="button" onClick={handleCancelUpdate} style={{ "margin": "10px" }}>
-                                                    Cancel Update
-                                                </button>
-                                                <button className="btn" type="button" onClick={handleUpdateItem} style={{ "margin": "10px" }}>
-                                                    Update Topping
-                                                </button> */}
+
                                                 <div className="col-6">
                                                     <button className="btn btn-primary w-100" type="button" onClick={handleCancelUpdate}> Cancel Update</button>
                                                 </div>
@@ -208,9 +200,7 @@ const Addtopping = () => {
                                         ) : (
                                             <>
 
-                                                {/* <button className="btn" type="button" onClick={submitAdmin}>
-                                                Add Topping
-                                            </button> */}
+
                                                 <div className="col-12">
                                                     <button className="btn btn-primary w-100" type="button" onClick={submitAdmin}>Add Topping</button>
                                                 </div>
@@ -230,54 +220,43 @@ const Addtopping = () => {
                             <div class="card justify-content-center">
                                 <div class="card-body">
                                     <h5 class="card-title col-lg-12">Records of Toppings</h5>
-                                    {/* <p>Add lightweight datatables to your project with using the <a href="https://github.com/fiduswriter/Simple-DataTables" target="_blank">Simple DataTables</a> library. Just add <code>.datatable</code> class name to any table you wish to conver to a datatable</p> */}
+                                    <div className="table-responsive">
 
-                                    <table class="table table-bordered datatable">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Sr No.</th>
-                                                <th scope="col">Name</th>
-                                                <th scope="col">Price</th>
-                                                <th scope="col">Update</th>
-                                                <th scope="col">Delete</th>
-
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {/* <tr>
-                                                <th scope="row">1</th>
-                                                <td>Brandon Jacob</td>
-                                                <td>25</td>
-                                                <td>
-                                                    <button className="btn btn-primary w-100" type="submit">Update</button>
-                                                </td>
-                                                <td>
-                                                    <button className="btn btn-primary w-100" type="submit">Delete</button>
-                                                </td>
-
-
-                                            </tr> */}
-                                            {items.map((item, index) => (
-                                                <tr key={item._id}>
-                                                    <th scope="row">{index + 1}</th>
-                                                    <td>{item.toppingName}</td>
-                                                    <td>{item.price}</td>
-                                                    <td>
-                                                        <button className="btn btn-primary w-100" type="button" onClick={() => handleUpdate(item)}>Update</button>
-                                                    </td>
-                                                    <td>
-                                                        <button className="btn btn-primary w-100" type="button" onClick={() => handleDelete(item._id)}>Delete</button>
-
-                                                    </td>
+                                        <table class="table table-bordered datatable">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Sr No.</th>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Price</th>
+                                                    <th scope="col">Update</th>
+                                                    <th scope="col">Delete</th>
 
                                                 </tr>
-                                            ))}
+                                            </thead>
+                                            <tbody>
+
+                                                {items.map((item, index) => (
+                                                    <tr key={item._id}>
+                                                        <th scope="row">{index + 1}</th>
+                                                        <td>{item.toppingName}</td>
+                                                        <td>{item.price}</td>
+                                                        <td>
+                                                            <button className="btn btn-primary w-100" type="button" onClick={() => handleUpdate(item)}>Update</button>
+                                                        </td>
+                                                        <td>
+                                                            <button className="btn btn-primary w-100" type="button" onClick={() => handleDelete(item._id)}>Delete</button>
+
+                                                        </td>
+
+                                                    </tr>
+                                                ))}
 
 
-                                        </tbody>
-                                    </table>
+                                            </tbody>
+                                        </table>
 
 
+                                    </div>
                                 </div>
                             </div>
 

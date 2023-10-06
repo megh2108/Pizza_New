@@ -1,18 +1,17 @@
 import React, { createContext, useReducer } from 'react';
-
-import { ToastContainer } from 'react-toastify';  // Import ToastContainer
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Routes, Route } from 'react-router-dom'
+import { initialState, reducer } from './Components/Reducer/Reducer';
 
 import './App.css';
 
-import { Routes, Route } from 'react-router-dom'
 
 
 import Addpizza from './Components/Addpizza/Addpizza';
 import Addtopping from './Components/Addtopping/Addtopping';
 import Cart from './Components/Cart/Cart';
 import Login from './Components/Login/Login';
-import Menu from './Components/Menu/Menu';
 import Menus from './Components/Menu/Menus';
 import Navbar from './Components/Navbar/Navbar';
 import Sidebar from './Components/Sidebar/Sidebar';
@@ -25,7 +24,6 @@ import Home from './Components/Home/Home'
 
 
 import ScrollToTop from './Components/Scroll/ScrollToTop'
-import { initialState, reducer } from './Components/Reducer/Reducer';
 import Orderrecord from './Components/Orderrecord/Orderrecord';
 import Orderdetail from './Components/Orderdetail/Orderdetail';
 
@@ -43,16 +41,13 @@ function App() {
         <ScrollToTop />
         <Navbar />
 
-        {/* <Sidebar /> */}
         <Routes>
           <Route path="/Addpizza" element={[<Sidebar />, <Addpizza />]} />
           <Route path="/Addtopping" element={[<Sidebar />, <Addtopping />]} />
           <Route path="/Orderrecord" element={[<Sidebar />, <Orderrecord />]} />
           <Route path="/Orderdetail" element={[<Sidebar />, <Orderdetail />]} />
           <Route path="/Dashboard" element={<Sidebar />} />
-
           <Route path="/Cart" element={<Cart />} />
-          {/* <Route path="/Menu" element={<Menu />} /> */}
           <Route path="/Menu" element={<Menus />} />
           <Route path="/Signup" element={<Signup />} />
           <Route path="/Login" element={<Login />} />
@@ -62,20 +57,14 @@ function App() {
           <Route path="/Home" element={<Home />} />
           <Route path="/" element={<Home />} />
 
-          {/* <Route path="/Contact" element={<Contact />} /> */}
-          {/* <Route path="/About" element={<About />} /> */}
-          {/* <Route path="/" element={<Home />} /> */}
+
         </Routes>
 
         <Footer />
 
-        {/* </Space> */}
-        {/* <Menu /> */}
-        {/* <Cart /> */}
-        {/* <Signup /> */}
-        {/* <Login /> */}
+
         <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} /> {/* Add ToastContainer */}
-     
+
       </UserContext.Provider>
 
 

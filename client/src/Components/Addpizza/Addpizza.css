@@ -2,3 +2,9 @@
     margin-left: 300px;
     z-index: 996;
 }
+
+@media (max-width: 1199px) {
+    #register {
+        margin-left: 0;
+    }
+  }

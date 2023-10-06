@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'; // Import toast
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Signup = () => {
@@ -28,9 +28,7 @@ const Signup = () => {
             requestBody.secretKey = secretKey;
         }
 
-        // const { name, email, phone, password, cpassword, type, secretKey, shopID } = user;
 
-        // const response = await fetch("/signin", {
         const response = await fetch("/sign", {
             method: "POST",
             headers: {
@@ -146,11 +144,7 @@ const Signup = () => {
                                                     />
                                                 </div>
                                                 <div className="col-6">
-                                                    {/* <label for="inputState" class="form-label">Shop Name</label>
-                                            <select id="inputState" class="form-select">
-                                                <option>Cheesy Pizza</option>
-                                                <option>Cheesy Pizza Lite</option>
-                                            </select> */}
+
                                                     <label for="yourSecretKey" className="form-label">Shop ID</label>
                                                     <input type="text" name="secretkey" className="form-control" id="yourSecretKey" required
                                                         value={shopID}
