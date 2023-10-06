@@ -21,9 +21,11 @@ import Contact from './Components/Contact/Contact';
 import About from './Components/About/About';
 import Home from './Components/Home/Home'
 
+
 import ScrollToTop from './Components/Scroll/ScrollToTop'
 import { initialState, reducer } from './Components/Reducer/Reducer';
-
+import Orderrecord from './Components/Orderrecord/Orderrecord';
+import Orderdetail from './Components/Orderdetail/Orderdetail';
 
 export const UserContext = createContext();
 
@@ -43,7 +45,10 @@ function App() {
         <Routes>
           <Route path="/Addpizza" element={[<Sidebar />, <Addpizza />]} />
           <Route path="/Addtopping" element={[<Sidebar />, <Addtopping />]} />
+          <Route path="/Orderrecord" element={[<Sidebar />, <Orderrecord />]} />
+          <Route path="/Orderdetail" element={[<Sidebar />, <Orderdetail />]} />
           <Route path="/Dashboard" element={<Sidebar />} />
+
           <Route path="/Cart" element={<Cart />} />
           {/* <Route path="/Menu" element={<Menu />} /> */}
           <Route path="/Menu" element={<Menus />} />

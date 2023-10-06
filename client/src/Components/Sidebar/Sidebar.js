@@ -27,7 +27,18 @@ const Sidebar = () => {
                             <span class="span">Add Toppings</span>
                         </NavLink>
                     </li>
-
+                    <li class="nav-item">
+                        <NavLink class="nav-link " to="/Orderrecord">
+                            <i class="bi bi-grid"></i>
+                            <span class="span">Order_Record</span>
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link " to="/Orderdetail">
+                            <i class="bi bi-grid"></i>
+                            <span class="span">Order_detail</span>
+                        </NavLink>
+                    </li>
 
                 </ul>
 

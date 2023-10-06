@@ -22,6 +22,7 @@ const Payment = require('../model/paymentSchema');
 const Shop = require('../model/shopSchema');
 const Toping = require('../model/topingSchema');
 
+
 // const Topping = require('../model/toppingSchema');
 
 
@@ -322,6 +323,79 @@ router.post('/order', Authenticate, async (req, res) => {
     }
 });
 
+router.get('/getorder', async (req, res) => {
+    try {
+        const Order_Record = await Order.find({});
+
+        // console.log("data :",Order_Record);
+        // console.log("user :",Order_Record.userID);
+        // const userIDs = Order_Record.map(order => order.userID);
+        // console.log("User IDs:", userIDs);                              
+
+        // const pizzas = await Pizza.find({});
+        res.json(Order_Record);
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+})
+
+router.get('/getorderdetail', async (req, res) => {
+    try {
+        const Order_Detail = await OrderDetail.find({});
+
+        console.log("data :",Order_Detail);
+        // console.log("user :",Order_Record.userID);
+        // const userIDs = Order_Record.map(order => order.userID);
+        // console.log("User IDs:", userIDs);                              
+
+        // const pizzas = await Pizza.find({});
+        res.json(Order_Detail);
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+})
+
+router.put('/updateOrderStatus/:orderId', async (req, res) => {
+    const { orderStatus } = req.body;
+    const { orderId } = req.params;
+
+    try {
+        const updatedOrder = await Order.findByIdAndUpdate(
+            orderId,
+            { $set: { orderStatus } },
+            { new: true }
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).json({ error: 'Order not found' });
+        }
+
+        res.status(200).json(updatedOrder);
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+// Route to get order details by orderID
+// router.get('/getOrderDetail/:orderID', async (req, res) => {
+//     try {
+//         const orderID = req.params.orderID;
+
+//         // Find order details by orderID and populate the items
+//         const orderDetail = await OrderDetail.findOne({ orderID }).populate('items.menuItem');
+
+//         if (!orderDetail) {
+//             return res.status(404).json({ message: 'Order detail not found' });
+//         }
+
+//         res.json(orderDetail);
+//     } catch (err) {
+//         console.error('Error fetching order detail:', err);
+//         res.status(500).json({ error: 'Internal server error' });
+//     }
+// });
 
 router.get('/getpizza', async (req, res) => {
     try {
