@@ -574,6 +574,24 @@ router.get('/logout', (req, res) => {
 //     res.send(req.rootUser);
 //   });
 
+router.delete('/removeFromCart/:itemId', async (req, res) => {
+    try {
+        const { itemId } = req.params;
+        
+       // Use Mongoose to find and delete the item by its unique _id
+       const deletedItem = await CartItem.findByIdAndDelete(itemId);
+
+       if (!deletedItem) {
+           return res.status(404).json({ error: 'Item not found' });
+       }
+
+       return res.status(200).json({ message: 'Item removed successfully' });
+   } catch (error) {
+       console.error('Error removing item:', error.message);
+       return res.status(500).json({ error: 'Failed to remove the item from the cart' });
+   }
+});
+
 router.post('/create-checkout-session', async (req, res) => {
     const { products } = req.body;
 

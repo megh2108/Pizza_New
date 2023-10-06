@@ -39,10 +39,38 @@ const scrollto = (hash) => {
 
 const Navbar = () => {
 
+
+
     const { state, dispatch } = useContext(UserContext);
     const isAdmin = state && state.isAdmin;
 
     console.log('isAdmin:', isAdmin);
+
+    useEffect(() => {
+        const closeMobileMenu = () => {
+            const navbar = select('#header-nav');
+            const navbarToggle = select('.mobile-nav-toggle');
+
+            if (navbar.classList.contains('navbar-mobile')) {
+                navbar.classList.remove('navbar-mobile');
+                navbarToggle.classList.toggle('bi-list');
+                navbarToggle.classList.toggle('bi-x');
+            }
+        };
+
+        // Add event listener to close mobile menu when any link is clicked
+        document.querySelectorAll('.navbar a').forEach((link) => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+
+        return () => {
+            // Remove event listener when component unmounts
+            document.querySelectorAll('.navbar a').forEach((link) => {
+                link.removeEventListener('click', closeMobileMenu);
+            });
+        };
+    }, []);
+
 
 
     useEffect(() => {
@@ -162,6 +190,8 @@ const Navbar = () => {
 
         document.addEventListener('click', handleClick, true);
 
+        
+        
         return () => {
             document.removeEventListener('click', handleClick, true);
         };

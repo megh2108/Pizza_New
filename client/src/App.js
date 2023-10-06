@@ -26,6 +26,7 @@ import Home from './Components/Home/Home'
 import ScrollToTop from './Components/Scroll/ScrollToTop'
 import Orderrecord from './Components/Orderrecord/Orderrecord';
 import Orderdetail from './Components/Orderdetail/Orderdetail';
+import Homenew from './Components/Home/Homenew';
 
 export const UserContext = createContext();
 
@@ -56,6 +57,7 @@ function App() {
           <Route path="/About" element={<About />} />
           <Route path="/Home" element={<Home />} />
           <Route path="/" element={<Home />} />
+          {/* <Route path="/" element={<Homenew />} /> */}
 
 
         </Routes>
