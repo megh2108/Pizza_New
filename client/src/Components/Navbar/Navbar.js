@@ -232,11 +232,13 @@ const Navbar = () => {
                                         <span class="d-none d-md-block ps-2">Cart</span>
                                     </NavLink>
                                 </li>
+                                {isAdmin && (
                                 <li class="nav-item  pe-3">
                                     <NavLink class="nav-link" to="/Dashboard" >
                                         <span class="d-none d-md-block ps-2">Dashboard</span>
                                     </NavLink>
                                 </li>
+                                   )}
                                 <li class="nav-item  pe-3">
                                     <NavLink class="nav-link" to="/Logout" >
                                         <span class="d-none d-md-block ps-2">Logout</span>

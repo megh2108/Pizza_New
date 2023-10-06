@@ -1,5 +1,7 @@
 import React, { createContext, useReducer } from 'react';
 
+import { ToastContainer } from 'react-toastify';  // Import ToastContainer
+import 'react-toastify/dist/ReactToastify.css';
 
 import './App.css';
 
@@ -72,7 +74,8 @@ function App() {
         {/* <Cart /> */}
         {/* <Signup /> */}
         {/* <Login /> */}
-
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} /> {/* Add ToastContainer */}
+     
       </UserContext.Provider>
 
 

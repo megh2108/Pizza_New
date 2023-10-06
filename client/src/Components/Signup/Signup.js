@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
-
+import { toast } from 'react-toastify'; // Import toast
+import 'react-toastify/dist/ReactToastify.css';
 
 const Signup = () => {
 
@@ -43,10 +44,10 @@ const Signup = () => {
         console.log(response.status);
 
         if (response.status === 422 || !res) {
-            window.alert("Invalid registration");
+            toast.error("Invalid registration");
             console.log("Invalid registration");
         } else {
-            window.alert("Registration Successfull");
+            toast.success("Registration Successfull");
             console.log("Successfull Registration");
 
             navigate("/Login");

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import './Cart.css'
 import { loadStripe } from '@stripe/stripe-js';
+import { toast } from 'react-toastify'; // Import toast
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const Cart = () => {
@@ -136,16 +138,17 @@ const Cart = () => {
                 }
 
                 console.log('Order placed successfully:', data.message);
-                window.alert('Order placed successfully');
+                toast.success('Order placed successfully');
 
             } catch (error) {
                 console.error('Error placing order:', error.message);
-                window.alert('Order not placed successfully');
+                toast.error('Order not placed successfully');
 
             }
         }
         else {
             console.log(result.error);
+            toast.error(result.error);
         }
 
     }

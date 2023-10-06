@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import './Menu.css'
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify'; // Import toast
+import 'react-toastify/dist/ReactToastify.css';
+
 
 
 const Menu = () => {
@@ -36,28 +39,28 @@ const Menu = () => {
         console.log(response.status);
 
         if (response.status === 500 || !res) {
-            window.alert("Failed to add Item to cart");
+            toast.error ("Failed to add Item to cart");
             console.log("Failed to add  Item to cart");
         }
         else if (response.status === 400) {
-            window.alert("Invalid size selected");
+            toast.error("Invalid size selected");
             console.log("Invalid size selected");
         }
         else if (response.status === 401) {
-            window.alert("Please Login");
+            toast.error("Please Login");
             console.log("Please Login");
             navigate("/login");
         }
         else if (response.status === 404) {
-            window.alert("Menu item not found");
+            toast.error("Menu item not found");
             console.log("Menu item not found");
         }
         else if (response.status === 201) {
-            window.alert("Item added to cart successfully");
+            toast.success("Item added to cart successfully");
             console.log("Item added to cart successfully");
         }
         else {
-            window.alert("Internal Error");
+            toast.error("Internal Error");
             console.log("Internal Error");
         }
 
