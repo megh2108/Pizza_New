@@ -38,7 +38,7 @@ const Menus = () => {
 
     return (
         <>
-            <section className="section">
+            <section className="section" id="menu">
                 <div className="container">
                     <div className="section-header">
                         <h2>Our Menu</h2>
