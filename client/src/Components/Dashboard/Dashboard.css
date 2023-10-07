@@ -1,0 +1,10 @@
+#section{
+    margin-left: 300px;
+    z-index: 996;
+}
+
+@media (max-width: 1199px) {
+    #section {
+        margin-left: 0;
+    }
+  }

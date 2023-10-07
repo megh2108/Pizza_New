@@ -27,6 +27,7 @@ import ScrollToTop from './Components/Scroll/ScrollToTop'
 import Orderrecord from './Components/Orderrecord/Orderrecord';
 import Orderdetail from './Components/Orderdetail/Orderdetail';
 import Homenew from './Components/Home/Homenew';
+import Dashboard from './Components/Dashboard/Dashboard';
 
 export const UserContext = createContext();
 
@@ -47,7 +48,7 @@ function App() {
           <Route path="/Addtopping" element={[<Sidebar />, <Addtopping />]} />
           <Route path="/Orderrecord" element={[<Sidebar />, <Orderrecord />]} />
           <Route path="/Orderdetail" element={[<Sidebar />, <Orderdetail />]} />
-          <Route path="/Dashboard" element={<Sidebar />} />
+          <Route path="/Dashboard" element={[<Sidebar />,<Dashboard />]} />
           <Route path="/Cart" element={<Cart />} />
           <Route path="/Menu" element={<Menus />} />
           <Route path="/Signup" element={<Signup />} />

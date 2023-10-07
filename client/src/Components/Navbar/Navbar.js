@@ -254,24 +254,25 @@ const Navbar = () => {
                                     </NavLink>
                                 </li>
                                 {/* {isAdmin && ( */}
-                                    <li class="nav-item  pe-3">
-                                        <NavLink class="nav-link" to="/Dashboard" >
-                                            <span >Dashboard</span>
-                                        </NavLink>
-                                    </li>
+                                <li class="nav-item  pe-3">
+                                    <NavLink class="nav-link" to="/Dashboard" >
+                                        <span >Dashboard</span>
+                                    </NavLink>
+                                </li>
                                 {/* )} */}
                                 <li class="nav-item  pe-3">
                                     <NavLink class="nav-link" to="/Logout" >
                                         <span >Logout</span>
                                     </NavLink>
                                 </li>
-                                {/* <li class="nav-item dropdown pe-3">
+                                <li class="nav-item dropdown pe-3">
 
-                                    <a class="nav-link nav-profile d-flex align-items-center pe-0"  data-bs-toggle="dropdown">
-                                        <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle"/>
-                                            <span class="">K. Anderson</span>
-                                    </a>
-                                </li> */}
+                                    <NavLink class="nav-link nav-profile d-flex align-items-center pe-0" data-bs-toggle="dropdown">
+                                        <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" style={{ "height": "30px", "width": "30px" }} />
+
+                                    </NavLink>
+                                    
+                                </li>
                             </>
                         ) : (
                             <>
