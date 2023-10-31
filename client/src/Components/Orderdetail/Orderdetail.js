@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const Orderdetails = () => {
     const [orders, setOrders] = useState([]);
 
+
     useEffect(() => {
         fetch("/getorderdetail", {
             method: "GET",
@@ -16,11 +17,15 @@ const Orderdetails = () => {
             .then((response) => response.json())
             .then((data) => {
                 setOrders(data);
+
+              
             })
             .catch((error) => {
                 console.error("Error fetching orders:", error);
             });
     }, []);
+
+   
 
 
     useEffect(() => {
@@ -42,17 +47,18 @@ const Orderdetails = () => {
                                 <table className="table table-bordered datatable">
                                     <thead>
                                         <tr>
-                                            <th scope="col">OrderDetail ID</th>
-                                            <th scope="col">Order ID</th>
+                                            <th scope="col">Sr No.</th>
+                                            <th scope="col">Order No.</th>
                                             <th scope="col">Items</th>
 
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {orders.map((order) => (
+                                        {orders.slice().reverse().map((order,index) => (
                                             <tr key={order._id}>
-                                                <td>{order._id}</td>
-                                                <td>{order.orderID}</td>
+                                                <td>{index+1}</td>
+                                                <td>Order - {orders.length - index }</td>
+                                                {/* <td>{order.orderID}</td> */}
                                                 <td>
                                                     <button
                                                         className="btn btn-primary w-100"
@@ -82,7 +88,7 @@ const Orderdetails = () => {
                                         <tbody>
                                             {orders.map((order) => (
                                                 <div id={`details-${order.orderID}`} key={order._id} style={{ "display": "none" }}>
-                                                    <h1>hello</h1>
+                                                    <h3 style={{"text-align":"center","margin-bottom":"25px"}}>Order Detail</h3>
                                                     <table className="table table-bordered">
                                                         <thead>
                                                             <tr>

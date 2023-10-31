@@ -3,8 +3,12 @@ import { DataTable } from 'simple-datatables';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 const Orderrecord = () => {
     const [orders, setOrders] = useState([]);
+    const [orderDates, setOrderDates] = useState([]);
+    const [users, setUsers] = useState({});
+    const [shops, setShops] = useState({})
 
     useEffect(() => {
         fetch("/getorder", {
@@ -15,12 +19,59 @@ const Orderrecord = () => {
         })
             .then((response) => response.json())
             .then((data) => {
-                setOrders(data);
+                // data.Order_Record.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+                setOrders(data.Order_Record);
+                setOrderDates(data.orderDates);
+                // Iterate through orders and fetch user and shop information
+                data.Order_Record.forEach((order) => {
+                    fetchUser(order.userID);
+                    fetchShop(order.shopID);
+                });
             })
             .catch((error) => {
                 console.error("Error fetching orders:", error);
             });
     }, []);
+
+    // Function to fetch user information
+    const fetchUser = (userID) => {
+        fetch(`/getUser/${userID}`, {
+            method: "GET",
+            headers: {
+                Accept: "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setUsers((prevUsers) => ({
+                    ...prevUsers,
+                    [userID]: data.userName,
+                }));
+            })
+            .catch((error) => {
+                console.error("Error fetching user information:", error);
+            });
+    };
+
+    // Function to fetch shop information
+    const fetchShop = (shopID) => {
+        fetch(`/getShop/${shopID}`, {
+            method: "GET",
+            headers: {
+                Accept: "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setShops((prevShops) => ({
+                    ...prevShops,
+                    [shopID]: data.shopName,
+                }));
+            })
+            .catch((error) => {
+                console.error("Error fetching shop information:", error);
+            });
+    };
 
     const handleStatusChange = async (orderId, newStatus) => {
         try {
@@ -71,9 +122,10 @@ const Orderrecord = () => {
                                 <table className="table table-bordered datatable">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Order ID</th>
-                                            <th scope="col">User ID</th>
-                                            <th scope="col">Shop ID</th>
+                                            <th scope="col">Sr No.</th>
+                                            <th scope="col">Order No.</th>
+                                            <th scope="col">User Name</th>
+                                            <th scope="col">Shop Name</th>
                                             <th scope="col">Order Date</th>
                                             <th scope="col">Total Amount</th>
                                             <th scope="col">Order Status</th>
@@ -82,12 +134,14 @@ const Orderrecord = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {orders.map((order) => (
+                                        {orders.slice().reverse().map((order, index) => (
+
                                             <tr key={order._id}>
-                                                <td>{order._id}</td>
-                                                <td>{order.userID}</td>
-                                                <td>{order.shopID}</td>
-                                                <td>{order.orderDate}</td>
+                                                <td>{index + 1}</td>
+                                                <td>Order - {orders.length - index }</td>
+                                                <td>{users[order.userID]}</td>
+                                                <td>{shops[order.shopID]}</td>
+                                                <td>{orderDates[orders.length - index - 1]}</td>
                                                 <td>{order.totalAmount}</td>
                                                 <td>{order.orderStatus}</td>
                                                 <td>{order.paymentStatus}</td>
@@ -110,8 +164,8 @@ const Orderrecord = () => {
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </div >
+            </section >
         </>
     );
 };

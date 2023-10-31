@@ -28,6 +28,7 @@ import Orderrecord from './Components/Orderrecord/Orderrecord';
 import Orderdetail from './Components/Orderdetail/Orderdetail';
 import Homenew from './Components/Home/Homenew';
 import Dashboard from './Components/Dashboard/Dashboard';
+import Yourorder from './Components/Yourorder/Yourorder';
 
 export const UserContext = createContext();
 
@@ -51,6 +52,7 @@ function App() {
           <Route path="/Dashboard" element={[<Sidebar />,<Dashboard />]} />
           <Route path="/Cart" element={<Cart />} />
           <Route path="/Menu" element={<Menus />} />
+          <Route path="/Yourorder" element={<Yourorder />} />
           <Route path="/Signup" element={<Signup />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/Logout" element={<Logout />} />
@@ -66,7 +68,7 @@ function App() {
         <Footer />
 
 
-        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} /> {/* Add ToastContainer */}
+        <ToastContainer position="top-center" autoClose={3000} hideProgressBar={false} /> {/* Add ToastContainer */}
 
       </UserContext.Provider>
 

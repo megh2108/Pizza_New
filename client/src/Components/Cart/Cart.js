@@ -10,22 +10,10 @@ const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [toppings, setToppings] = useState([]);
     const [userData, setUserData] = useState([]);
+    const [totalPrice, setTotalPrice] = useState(0); 
+    
 
-    const [quantity, setQuantity] = useState();
-    console.log("hi", cartItems);
-
-    const [totalPrice, setTotalPrice] = useState(0); // Initialize total price
-
-
-    const decrementQuantity = () => {
-        if (quantity > 1) {
-            setQuantity(quantity - 1);
-        }
-    };
-
-    const incrementQuantity = () => {
-        setQuantity(quantity + 1);
-    };
+  
 
     const callGetCart = async () => {
         try {
@@ -58,61 +46,7 @@ const Cart = () => {
         }
     };
 
-    const handleRemoveItem = async (itemId) => {
-        try {
-            // Send a DELETE request to remove the item from the cart
-            const response = await fetch(`/removeFromCart/${itemId}`, {
-                method: 'DELETE',
-                credentials: 'include',
-            });
-
-            const res = await response.json();
-            console.log(response.status);
-
-            if (response.status === 500 || !res) {
-                toast.error("Failed to remove the item from the cart");
-                console.log("Failed to remove the item from the cart");
-            }
-            else if (response.status === 404) {
-                toast.error("Item not found");
-                console.log("Item not found");
-            }
-           
-            else if (response.status === 200) {
-
-                const updatedCartItems = cartItems.filter(item => item._id !== itemId);
-                        setCartItems(updatedCartItems);
-                toast.success("Item removed successfully");
-                console.log("Item removed successfully");
-            }
-            // else {
-            //     toast.error("Internal Error");
-            //     console.log("Internal Error");
-            // }
-
-        } catch (error) {
-            console.error(error);
-        }
-        //     if (response.ok) {
-        //         // Remove the item from the cartItems state
-        //         const updatedCartItems = cartItems.filter(item => item._id !== itemId);
-        //         setCartItems(updatedCartItems);
     
-        //         console.log('Item removed successfully');
-        //         toast.success('Item removed successfully');
-        //     } else {
-        //         // Handle errors
-        //         const data = await response.json();
-        //         throw new Error(data.error || 'Failed to remove the item from the cart');
-        //     }
-        // } catch (error) {
-        //     console.error('Error removing item:', error.message);
-        //     toast.error('Item not removed successfully');
-        // }
-    };
-    
-
-
     const fetchToppings = async () => {
         try {
             const response = await fetch('/gettoppings');
@@ -231,113 +165,90 @@ const Cart = () => {
                     <p>Your Cart</p>
                 </div>
                 <div class="container">
-                    <div class="card" id="card-cart" >
-                        {cartItems.length === 0 ? (
-                            <div className="text-center">
-                                <p><span>Your cart is empty.</span></p>
-                            </div>
-                        ) : (
-                            <div>
+                    {cartItems.length === 0 ? (
+                        <div className="text-center">
+                            <p><span>Your cart is empty.</span></p>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="table-responsive">
+                                <table class="table table-bordered ">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Sr No.</th>
+                                            <th scope="col">Image</th>
+                                            <th scope="col">Item Name</th>
+                                            <th scope="col">Size</th>
+                                            <th scope="col">Price</th>
+                                            <th scope="col">Qty</th>
+                                            <th scope="col">Total Price</th>
 
-                                {cartItems.map((item) => (
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {cartItems.map((item, index) => (
 
-                                    <div class="col-lg-9" key={item._id} >
-                                        <div class="card mb-3" id="item-card" >
-                                            <div class="row g-0">
-                                                <div class="col-md-4">
-                                                    <img
-                                                        src="assets/img/italianpizza.jpg"
-                                                        class="img-fluid rounded-start"
-                                                        alt="..."
+                                            <tr key={item._id}>
+                                                <th scope="row">{index + 1}</th>
+                                                <td> <img
+                                                    src="assets/img/italianpizza.jpg"
+                                                    class="img-fluid rounded-start"
+                                                    alt="..." style={{ "height": "150px", "width": "150px" }}
+                                                /></td>
+                                                <td>{item.itemName}</td>
+                                                <td>{item.size}</td>
+                                                <td>{item.price}</td>
+                                                <td > <button type="button" class="btn btn-outline-primary" id="qty">-</button>
+                                                    <input
+                                                        type="text"
+                                                        name="quantity"
+                                                        className="form-control"
+                                                        id="yourcartQuantity"
+                                                        value={item.quantity}
+                                                        readOnly
                                                     />
-                                                </div>
-                                                <div class="col-md-8">
-                                                    <div class="card-body">
-                                                        <div class="row">
-                                                            <h5 class="card-title col-lg-4">{item.itemName}</h5>
-                                                            <p class="col-lg-4">Added on: {item.dateAdded.toLocaleString()}</p>
+                                                    <button type="button" class="btn btn-outline-primary" id="qty">+</button></td>
+                                                <td>{item.totalPrice}</td>
 
-                                                            <button class="btn btn-primary col-lg-4" style={{ "height": "40px", "width": "100px", "margin-top": "5px", "margin-left": "auto" }}  onClick={() => handleRemoveItem(item._id)}>Remove</button>
 
-                                                        </div>
-                                                        <div class="row mb-3">
-                                                            <div class="col-lg-4">
-                                                                <label for="inputState" class="form-label">
-                                                                    Size
-                                                                </label>
+                                            </tr>
+                                        ))
+                                        }
 
-                                                                <select id="inputState" class="form-select">
-                                                                    <option>{item.size}</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-lg-2">
-                                                                <label for="yourSecretKey" className="form-label">
-                                                                    Price
-                                                                </label>
-                                                                <h5 class="card-text">{item.price}</h5>
-                                                            </div>
-                                                            <div class="col-lg-3 mt-4">
-                                                                <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                                                    <button type="button" class="btn btn-outline-primary" onClick={decrementQuantity}>-</button>
-                                                                    <input
-                                                                        type="text"
-                                                                        name="quantity"
-                                                                        className="form-control"
-                                                                        id="yourQuantity"
-                                                                        value={item.quantity}
-                                                                        readOnly
-                                                                    />
-                                                                    <button type="button" class="btn btn-outline-primary" onClick={incrementQuantity}>+</button>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-2 ">
 
-                                                                <label for="yourSecretKey" className="form-label">Total Price</label>
-                                                                <h5 class="card-text">{item.totalPrice}</h5>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-check">
-                                                            <h5 class="card-text">Toppings</h5>
-                                                            <div class="row">
 
-                                                                {toppings.map((topping) => (
-                                                                    <div className="col-lg-2" key={`topping-${topping._id}`}>
-                                                                        <label className="form-check-label" htmlFor={`topping-${topping._id}`}>
-                                                                            <input
-                                                                                className="form-check-input"
-                                                                                type="checkbox"
-                                                                                id={`topping-${topping._id}`}
-                                                                                value={topping.toppingName}
-                                                                            />
-                                                                            {topping.toppingName}
-                                                                        </label>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))
-                                }
-                                <div class="row">
-                                    <div class="col-lg-8" >
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="table-responsive">
 
-                                        <label for="yourSecretKey" className="form-label">Total Price</label>
-                                        <h5 class="card-text">{totalPrice}</h5>
-                                    </div>
-                                    <div class="col-lg-4 ">
+                                <table class="table table-bordered ">
+                                    <tbody>
+                                        <tr>
+                                            <td>Total Price</td>
+                                            <td>{totalPrice}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Discount Price</td>
+                                            <td>0</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total Price</td>
+                                            <td>{totalPrice}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colSpan={2}> <button class="btn btn-primary" onClick={placeOrder}>Placed Order</button> </td>
+                                        </tr>
 
-                                        <button class="btn btn-primary" onClick={placeOrder}>Placed Order</button>
-                                    </div>
-                                </div>
+
+                                    </tbody>
+                                </table>
                             </div>
 
-                        )}
+                        </>
 
-                    </div>
+                    )}
+
                 </div>
             </section>
         </>

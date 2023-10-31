@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import './Menu.css';
 import { useNavigate } from 'react-router-dom';
-import PizzaCard from './Pizzacard'; 
+import PizzaCard from './Pizzacard';
 
 const Menus = () => {
     const navigate = useNavigate();
     const [userData, setUserData] = useState([]);
+    const [loading, setLoading] = useState(true);
+
 
     const callMenuPage = async () => {
         try {
@@ -20,7 +22,10 @@ const Menus = () => {
 
             const res = await response.json();
             console.log(res);
+
             setUserData(res);
+            setLoading(false);
+
 
             if (!response.ok) {
                 const error = new Error(res.error);
@@ -69,19 +74,23 @@ const Menus = () => {
 
 
                     </ul>
+                    {loading ? (
+                        <h4 style={{ "text-align": "center","margin-top":"50px" }}>  Loading...</h4>
+                    ) : (
 
-                    <div className="tab-content" data-aos="fade-up" data-aos-delay="300">
+                        <div className="tab-content" data-aos="fade-up" data-aos-delay="300">
 
-                        <div className="tab-pane fade active show" id="menu-pizzas">
+                            <div className="tab-pane fade active show" id="menu-pizzas">
 
 
-                            <div className="row">
-                                {userData.map((menuItem) => (
-                                    <PizzaCard key={menuItem.id} pizza={menuItem} />
-                                ))}
+                                <div className="row">
+                                    {userData.map((menuItem) => (
+                                        <PizzaCard key={menuItem.id} pizza={menuItem} />
+                                    ))}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </section>
         </>

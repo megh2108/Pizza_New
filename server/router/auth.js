@@ -66,6 +66,7 @@ router.post('/signin', async (req, res) => {
 
 })
 
+//for register
 router.post('/sign', async (req, res) => {
     const { name, email, phone, password, cpassword, type, secretKey, shopID } = req.body;
     console.log(req.body);
@@ -105,7 +106,7 @@ router.post('/sign', async (req, res) => {
 
 
 
-
+// for login 
 router.post('/login', async (req, res) => {
 
     try {
@@ -167,7 +168,7 @@ router.post('/login', async (req, res) => {
 })
 
 
-
+//for add to cart form user
 router.post('/addtocart', Authenticate, async (req, res) => {
     try {
 
@@ -249,7 +250,7 @@ router.post('/addtocart', Authenticate, async (req, res) => {
 
 
 
-
+//for placed order
 router.post('/order', Authenticate, async (req, res) => {
     try {
         const userId = req.rootUser._id;
@@ -277,6 +278,8 @@ router.post('/order', Authenticate, async (req, res) => {
             paymentStatus: 'Pending'
         });
 
+        console.log(order.shopID);
+
         await order.save();
 
         const orderDetails = new OrderDetail({
@@ -302,34 +305,98 @@ router.post('/order', Authenticate, async (req, res) => {
     }
 });
 
+//get order for admin
 router.get('/getorder', async (req, res) => {
     try {
         const Order_Record = await Order.find({});
 
-        // console.log("data :",Order_Record);
-        // const userIDs = Order_Record.map(order => order.userID);
-        // console.log("User IDs:", userIDs);                              
+        console.log(Order_Record);
 
-        res.json(Order_Record);
+        const orderDates = Order_Record.map(order => {
+            const date = new Date(order.orderDate);
+            const formattedDate = date.toISOString().split('T')[0];
+            return formattedDate;
+        });
+        console.log(orderDates);
+
+        const response = {
+            orderDates: orderDates,
+            Order_Record:Order_Record
+         
+        };
+
+        // const userOrderDetails = await OrderDetail.find({ orderID: orderId });
+        // console.log(response);
+        res.json(response);
     } catch (err) {
         console.error('Error fetching data:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
 })
 
+router.get('/getUser/:userID', async (req, res) => {
+    try {
+        const userID = req.params.userID;
+        
+        // Find the shop based on shopID
+        const user = await Userss.findOne({ _id: userID });
+        
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        
+        // Extract the shop name from the shop document
+        const userName = user.name;
+        // console.log(userName);
+
+        // Return the shop details as JSON
+        res.json({ userName });
+    } catch (error) {
+        console.error('Error fetching user details:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+// Define the route for fetching shop details by shopID
+router.get('/getShop/:shopID', async (req, res) => {
+    try {
+        const shopID = req.params.shopID;
+        
+        // Find the shop based on shopID
+        const shop = await Shop.findOne({ _id: shopID });
+
+        if (!shop) {
+            return res.status(404).json({ error: 'Shop not found' });
+        }
+
+        // Extract the shop name from the shop document
+        const shopName = shop.shopName;
+
+        // Return the shop details as JSON
+        res.json({ shopName });
+    } catch (error) {
+        console.error('Error fetching shop details:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+//get order detial for admin
 router.get('/getorderdetail', async (req, res) => {
     try {
         const Order_Detail = await OrderDetail.find({});
 
-        // console.log("data :",Order_Detail);
+       
 
         res.json(Order_Detail);
+
+        
     } catch (err) {
         console.error('Error fetching data:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
 })
 
+
+//update order status for admin
 router.put('/updateOrderStatus/:orderId', async (req, res) => {
     const { orderStatus } = req.body;
     const { orderId } = req.params;
@@ -352,7 +419,7 @@ router.put('/updateOrderStatus/:orderId', async (req, res) => {
     }
 });
 
-
+//get pizza for menu
 router.get('/getpizza', async (req, res) => {
     try {
         const pizzas = await PizzaMenuItem.find({});
@@ -363,22 +430,66 @@ router.get('/getpizza', async (req, res) => {
     }
 })
 
+
+//get cart for cart page for particular user
+// router.get('/getcart', Authenticate, async (req, res) => {
+//     try {
+
+//         const userId = req.rootUser._id;
+//         console.log("user:", userId)
+//         const userEmail = req.rootUser.email;
+//         console.log("email:", userEmail)
+
+//         const carts = await Cart.findOne({ userID: userId });
+
+//         console.log(carts);
+
+        
+//         res.json(carts);
+//     } catch (err) {
+//         console.error('Error fetching data:', err);
+//         res.status(500).json({ error: 'Internal server error' });
+//     }
+// })
 router.get('/getcart', Authenticate, async (req, res) => {
     try {
-
         const userId = req.rootUser._id;
-        console.log("user:", userId)
+        console.log("user:", userId);
+
         const userEmail = req.rootUser.email;
-        console.log("email:", userEmail)
+        console.log("email:", userEmail);
 
         const carts = await Cart.findOne({ userID: userId });
+
+        // if (carts) {
+        //     const itemNames = carts.items.map(item => item.itemName);
+        //     console.log("Item Names:", itemNames);
+        //     // res.json(itemNames);
+
+        //     const itemDetails = await PizzaMenuItem.findOne({ itemName: itemNames });
+
+        //     const response = {
+        //         carts:carts,
+        //         itemDetails:itemDetails
+        //     }
+        // res.json(response);
         res.json(carts);
+
+        // } else {
+        //     console.log("Cart not found for the user.");
+        //     res.status(404).json({ error: 'Cart not found' });
+        // }
     } catch (err) {
         console.error('Error fetching data:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
 })
 
+
+
+
+
+//get toppinf=gs for admin dashboard
 router.get('/gettoppings', async (req, res) => {
     try {
         const toppings = await Toping.find();
@@ -389,6 +500,8 @@ router.get('/gettoppings', async (req, res) => {
     }
 });
 
+
+//additem for admin dashboard
 router.post('/addItem', Authenticate, async (req, res) => {
     try {
 
@@ -423,6 +536,7 @@ router.post('/addItem', Authenticate, async (req, res) => {
     }
 });
 
+//delete item for admin dashboard
 router.delete('/deleteItems/:itemId', Authenticate, async (req, res) => {
     const itemId = req.params.itemId;
 
@@ -441,6 +555,8 @@ router.delete('/deleteItems/:itemId', Authenticate, async (req, res) => {
     }
 });
 
+
+//update item for admin dashboard
 router.put('/updateItems/:itemId', Authenticate, async (req, res) => {
     const { itemId } = req.params;
     const updateData = req.body;
@@ -465,7 +581,7 @@ router.put('/updateItems/:itemId', Authenticate, async (req, res) => {
 });
 
 
-
+//delete topping for admin dashboard
 router.delete('/deleteTopping/:itemId', Authenticate, async (req, res) => {
     const itemId = req.params.itemId;
 
@@ -484,6 +600,7 @@ router.delete('/deleteTopping/:itemId', Authenticate, async (req, res) => {
     }
 });
 
+//update toppings for admin dashboard
 router.put('/updateToppings/:itemId', Authenticate, async (req, res) => {
     const { itemId } = req.params;
     const updateData = req.body;
@@ -507,6 +624,8 @@ router.put('/updateToppings/:itemId', Authenticate, async (req, res) => {
     }
 });
 
+
+//get item for pizza in admin dashboard
 router.get('/getItems', Authenticate, async (req, res) => {
     try {
         const { skip, limit } = req.query;
@@ -520,6 +639,7 @@ router.get('/getItems', Authenticate, async (req, res) => {
     }
 });
 
+//get item for topping in admin dashboard
 router.get('/getItemsss', Authenticate, async (req, res) => {
     try {
         const TopingItems = await Toping.find();
@@ -530,6 +650,7 @@ router.get('/getItemsss', Authenticate, async (req, res) => {
     }
 });
 
+// add topping for admin
 router.post('/addTopping', Authenticate, async (req, res) => {
     try {
 
@@ -559,6 +680,21 @@ router.post('/addTopping', Authenticate, async (req, res) => {
     }
 });
 
+router.get('/admin', Authenticate,async (req, res) => {
+    console.log(`Hello Admin`);
+
+    const userId = req.rootUser._id;
+
+    const userEmail = req.rootUser.email;
+
+    const admin = await Userss.findOne({ email: userEmail });
+
+    if (!admin || admin.type !== 'admin') {
+        return res.status(404).json({ error: 'Admin not found' });
+    }
+
+    res.send(req.rootUser);
+});
 router.get('/Cart', Authenticate, (req, res) => {
     console.log(`Hello my About`);
     res.send(req.rootUser);
@@ -573,6 +709,41 @@ router.get('/logout', (req, res) => {
 //     console.log(`Hello my About`);
 //     res.send(req.rootUser);
 //   });
+
+router.put('/updateQuantity/:itemId', async (req, res) => {
+  
+    try {
+        const {itemId} = req.params;
+        console.log("Item:",itemId)
+        const {newQuantity} = req.body;
+
+        const cart = await Cart.findOne({ 'items._id': itemId });
+        console.log("cart:",cart)
+
+        if (!cart) {
+            return res.status(404).json({ error: 'Cart not found' });
+        }
+
+        // Find the specific item within the cart
+        const cartItem = cart.items.find((item) => item._id.toString() === itemId);
+
+        if (!cartItem) {
+            return res.status(404).json({ error: 'Cart item not found' });
+        }
+
+        // Update the quantity
+        cartItem.quantity = newQuantity;
+
+        // Save the changes
+        await cart.save();
+
+        // Respond with the updated cart or a success message
+        res.status(200).json(cart);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to update quantity' });
+    }
+});
 
 router.delete('/removeFromCart/:itemId', async (req, res) => {
     try {
@@ -592,6 +763,41 @@ router.delete('/removeFromCart/:itemId', async (req, res) => {
    }
 });
 
+//for user your order page
+router.get('/getuserorder',Authenticate, async (req, res) => {
+    try {
+        const userId = req.rootUser._id;
+
+        const userOrders = await Order.find({ userID: userId });
+
+        // console.log(userOrders);
+        // res.json(userOrders);
+        // const orderDates = userOrders.map(order => order.orderDate);
+        const orderDates = userOrders.map(order => {
+            const date = new Date(order.orderDate);
+            const formattedDate = date.toISOString().split('T')[0];
+            return formattedDate;
+        });
+        const orderId = userOrders.map(order => order._id);
+        const userOrderDetails = await OrderDetail.find({ orderID: orderId });
+
+        const response = {
+            orderDates: orderDates,
+            userOrderDetails: userOrderDetails
+        };
+
+        console.log(response);
+        res.json(response);
+
+
+     
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+})
+
+//for payment gateway
 router.post('/create-checkout-session', async (req, res) => {
     const { products } = req.body;
 
