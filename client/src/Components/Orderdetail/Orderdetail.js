@@ -75,7 +75,7 @@ const Orderdetails = () => {
                                     </tbody>
                                 </table>
                                 <div id="detials" style={{ "display": "none" }}>
-                                    <h1>hello</h1>
+                                    <h1>Order Detail</h1>
                                     <table className="table table-bordered">
                                         <thead>
                                             <tr>

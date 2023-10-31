@@ -198,7 +198,7 @@ const Cart = () => {
                                                 <td>{item.itemName}</td>
                                                 <td>{item.size}</td>
                                                 <td>{item.price}</td>
-                                                <td > <button type="button" class="btn btn-outline-primary" id="qty">-</button>
+                                                <td style={{"display":"flex"}}> <button type="button" class="btn btn-outline-primary" id="qty">-</button>
                                                     <input
                                                         type="text"
                                                         name="quantity"
