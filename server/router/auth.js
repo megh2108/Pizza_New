@@ -305,6 +305,19 @@ router.post('/order', Authenticate, async (req, res) => {
     }
 });
 
+//get user for admin
+router.get('/getuserdetail', async (req, res) => {
+    try {
+        const User_Record = await Userss.find({});
+
+        console.log(User_Record);
+        res.json(User_Record);
+    } catch (err) {
+        console.error('Error fetching data:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+})
+
 //get order for admin
 router.get('/getorder', async (req, res) => {
     try {
@@ -312,14 +325,72 @@ router.get('/getorder', async (req, res) => {
 
         console.log(Order_Record);
 
-        res.json(Order_Record);
+        const orderDates = Order_Record.map(order => {
+            const date = new Date(order.orderDate);
+            const formattedDate = date.toISOString().split('T')[0];
+            return formattedDate;
+        });
+        console.log(orderDates);
+
+        const response = {
+            orderDates: orderDates,
+            Order_Record:Order_Record
+         
+        };
+
+        // const userOrderDetails = await OrderDetail.find({ orderID: orderId });
+        // console.log(response);
+        res.json(response);
     } catch (err) {
         console.error('Error fetching data:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
 })
 
+router.get('/getUser/:userID', async (req, res) => {
+    try {
+        const userID = req.params.userID;
+        
+        // Find the shop based on shopID
+        const user = await Userss.findOne({ _id: userID });
+        
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        
+        // Extract the shop name from the shop document
+        const userName = user.name;
+        // console.log(userName);
 
+        // Return the shop details as JSON
+        res.json({ userName });
+    } catch (error) {
+        console.error('Error fetching user details:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+// Define the route for fetching shop details by shopID
+router.get('/getShop/:shopID', async (req, res) => {
+    try {
+        const shopID = req.params.shopID;
+        
+        // Find the shop based on shopID
+        const shop = await Shop.findOne({ _id: shopID });
+
+        if (!shop) {
+            return res.status(404).json({ error: 'Shop not found' });
+        }
+
+        // Extract the shop name from the shop document
+        const shopName = shop.shopName;
+
+        // Return the shop details as JSON
+        res.json({ shopName });
+    } catch (error) {
+        console.error('Error fetching shop details:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 
 //get order detial for admin

@@ -29,6 +29,7 @@ import Orderdetail from './Components/Orderdetail/Orderdetail';
 import Homenew from './Components/Home/Homenew';
 import Dashboard from './Components/Dashboard/Dashboard';
 import Yourorder from './Components/Yourorder/Yourorder';
+import Userdetail from './Components/Userdetail/Userdetail';
 
 export const UserContext = createContext();
 
@@ -49,6 +50,7 @@ function App() {
           <Route path="/Addtopping" element={[<Sidebar />, <Addtopping />]} />
           <Route path="/Orderrecord" element={[<Sidebar />, <Orderrecord />]} />
           <Route path="/Orderdetail" element={[<Sidebar />, <Orderdetail />]} />
+          <Route path="/Userdetail" element={[<Sidebar />, <Userdetail />]} />
           <Route path="/Dashboard" element={[<Sidebar />,<Dashboard />]} />
           <Route path="/Cart" element={<Cart />} />
           <Route path="/Menu" element={<Menus />} />

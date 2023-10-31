@@ -30,13 +30,19 @@ const Sidebar = () => {
                     <li class="nav-item">
                         <NavLink class="nav-link " to="/Orderrecord">
                             <i class="bi bi-grid"></i>
-                            <span class="span">Order_Record</span>
+                            <span class="span">Order Records</span>
                         </NavLink>
                     </li>
                     <li class="nav-item">
                         <NavLink class="nav-link " to="/Orderdetail">
                             <i class="bi bi-grid"></i>
-                            <span class="span">Order_detail</span>
+                            <span class="span">Order Details</span>
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link " to="/Userdetail">
+                            <i class="bi bi-grid"></i>
+                            <span class="span">User Details</span>
                         </NavLink>
                     </li>
 

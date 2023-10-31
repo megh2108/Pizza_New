@@ -17,6 +17,7 @@ const Orderdetails = () => {
             .then((response) => response.json())
             .then((data) => {
                 setOrders(data);
+
               
             })
             .catch((error) => {
@@ -53,10 +54,11 @@ const Orderdetails = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {orders.map((order) => (
+                                        {orders.slice().reverse().map((order,index) => (
                                             <tr key={order._id}>
-                                                <td>{order._id}</td>
-                                                <td>{order.orderID}</td>
+                                                <td>{index+1}</td>
+                                                <td>Order - {orders.length - index }</td>
+                                                {/* <td>{order.orderID}</td> */}
                                                 <td>
                                                     <button
                                                         className="btn btn-primary w-100"
