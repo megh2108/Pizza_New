@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { DataTable } from 'simple-datatables';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import 'bootstrap/dist/js/bootstrap.bundle.min'; 
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const Orderrecord = () => {
     const [orders, setOrders] = useState([]);
@@ -103,12 +104,19 @@ const Orderrecord = () => {
     };
 
     useEffect(() => {
+        // Initialize DataTables
         const datatables = document.querySelectorAll('.datatable');
-
         datatables.forEach((datatable) => {
             new DataTable(datatable);
         });
+    
+        // Initialize Bootstrap dropdowns
+        const dropdowns = document.querySelectorAll('.dropdown-toggle');
+        dropdowns.forEach((dropdown) => {
+            new bootstrap.Dropdown(dropdown);
+        });
     }, []);
+    
 
     return (
         <>
