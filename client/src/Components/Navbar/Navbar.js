@@ -76,9 +76,9 @@ const Navbar = () => {
         // Initialize Bootstrap tooltips
         const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         const tooltipList = tooltipTriggerList.map((tooltipTriggerEl) => {
-          return new window.bootstrap.Tooltip(tooltipTriggerEl);
+            return new window.bootstrap.Tooltip(tooltipTriggerEl);
         });
-      }, []);
+    }, []);
 
 
     useEffect(() => {
@@ -266,14 +266,12 @@ const Navbar = () => {
                                         {/* <span >Cart</span> */}
                                     </NavLink>
                                 </li>
-                               
-                                {/* {isAdmin && ( */}
-                                <li class="nav-item  pe-3">
+
+                                {/* <li class="nav-item  pe-3">
                                     <NavLink class="nav-link" to="/Cpassword" >
                                         <span >Change Password</span>
                                     </NavLink>
                                 </li>
-                                {/* )} */}
                                 <li class="nav-item  pe-3">
                                     <NavLink class="nav-link" to="/Yourorder" >
                                         <span >Your Order</span>
@@ -283,62 +281,29 @@ const Navbar = () => {
                                     <NavLink class="nav-link" to="/Logout" >
                                         <span >Logout</span>
                                     </NavLink>
-                                </li>
-                                {/* <li class="nav-item dropdown pe-3">
-
-                                    <NavLink class="nav-link nav-profile d-flex align-items-center pe-0" data-bs-toggle="dropdown">
-                                        <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle" style={{ "height": "30px", "width": "30px" }} />
-                                    </NavLink>
-
-                                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-                                        <li class="dropdown-header">
-                                            <h6>Kevin Anderson</h6>
-                                            <span>Web Designer</span>
-                                        </li>
-                                        <li>
-                                            <hr class="dropdown-divider" />
-                                        </li>
-
-                                        <li>
-                                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                                                <i class="bi bi-person"></i>
-                                                <span>My Profile</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <hr class="dropdown-divider" />
-                                        </li>
-
-                                        <li>
-                                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                                                <i class="bi bi-gear"></i>
-                                                <span>Account Settings</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <hr class="dropdown-divider" />
-                                        </li>
-
-                                        <li>
-                                            <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
-                                                <i class="bi bi-question-circle"></i>
-                                                <span>Need Help?</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <hr class="dropdown-divider" />
-                                        </li>
-
-                                        <li>
-                                            <a class="dropdown-item d-flex align-items-center" href="/Logout">
-                                                <i class="bi bi-box-arrow-right"></i>
-                                                <span>Sign Out</span>
-                                            </a>
-                                        </li>
-
-                                    </ul>
-
                                 </li> */}
+                                <li class="nav-item  pe-3">
+                                    <NavLink  className="dropdown-toggle" id={`statusDropdown`} data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="bi bi-person"></i>
+                                    </NavLink>
+                                    <div className="dropdown-menu" aria-labelledby={`statusDropdown`} >
+                                        <li class="nav-item  pe-3" style={{"margin":"10px"}}>
+                                            <NavLink class="dropdown-item" to="/Cpassword">
+                                                <span >Change Password</span>
+                                            </NavLink>
+                                        </li>
+                                        <li class="nav-item  pe-3" style={{"margin":"10px"}}>
+                                            <NavLink class="dropdown-item" to="/Yourorder" >
+                                                <span >Your Order</span>
+                                            </NavLink>
+                                        </li>
+                                        <NavLink class="dropdown-item" to="/Logout" style={{"margin":"10px"}}>
+                                            Logout
+                                        </NavLink>
+                                       
+                                    </div>
+                                </li>
+                               
                             </>
                         ) : (
                             <>
