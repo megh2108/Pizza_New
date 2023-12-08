@@ -30,6 +30,7 @@ import Homenew from './Components/Home/Homenew';
 import Dashboard from './Components/Dashboard/Dashboard';
 import Yourorder from './Components/Yourorder/Yourorder';
 import Userdetail from './Components/Userdetail/Userdetail';
+import Cpassword from './Components/ChangePassword/Cpassword';
 
 export const UserContext = createContext();
 
@@ -57,6 +58,7 @@ function App() {
           <Route path="/Yourorder" element={<Yourorder />} />
           <Route path="/Signup" element={<Signup />} />
           <Route path="/Login" element={<Login />} />
+          <Route path="/Cpassword" element={<Cpassword />} />
           <Route path="/Logout" element={<Logout />} />
           <Route path="/Contact" element={<Contact />} />
           <Route path="/About" element={<About />} />
