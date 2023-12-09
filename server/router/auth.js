@@ -27,44 +27,7 @@ router.get('/', (req, res) => {
     res.send(`Hello world from server`);
 })
 
-router.post('/signin', async (req, res) => {
 
-    const { name, email, phone, password, cpassword } = req.body;
-
-    console.log(req.body);
-
-    if (!name || !email || !phone || !password || !cpassword) {
-
-        return res.status(422).json({ error: "please filled properly feild ." });
-
-    }
-
-    try {
-        const userExist = await User.findOne({ email: email });
-
-        if (userExist) {
-            return res.status(422).json({ error: "user is already exist" });
-        } else if (password != cpassword) {
-            return res.status(422).json({ error: "password are not same" });
-
-        } else {
-
-
-            const user = new User({ name, email, phone, password, cpassword });
-
-            await user.save();
-
-            res.status(201).json({ message: "user registerd successfully" });
-        }
-
-
-    } catch (err) {
-        console.log(err);
-    }
-
-
-
-})
 
 //for register
 router.post('/sign', async (req, res) => {
@@ -842,6 +805,33 @@ router.post('/create-checkout-session', async (req, res) => {
 
     res.json({ id: session.id })
 
+});
+router.post('/change-password', Authenticate, async (req, res) => {
+    try {
+        const { currentPassword, newPassword, reenterNewPassword } = req.body;
+
+        // Check if the new password and re-entered password match
+        if (newPassword !== reenterNewPassword) {
+            return res.status(400).json({ error: 'New password and re-entered password do not match.' });
+        }
+
+        // Check if the current password is correct
+        const isMatch = await bcrypt.compare(currentPassword, req.Userss.cpassword); // Use cpassword here
+
+        if (!isMatch) {
+            return res.status(400).json({ error: 'Current password is incorrect.' });
+        }
+
+        // Update the password
+        req.Userss.password = newPassword;
+        req.Userss.cpassword = await bcrypt.hash(newPassword, 12);
+        await req.Userss.save();
+
+        res.status(200).send({ message: 'Password changed successfully.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: 'Internal Server Error' });
+    }
 });
 
 module.exports = router;
