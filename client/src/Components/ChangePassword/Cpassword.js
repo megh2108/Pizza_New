@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import "./Cpassword.css";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Cpassword = () => {
     const [formData, setFormData] = useState({
@@ -28,13 +30,28 @@ const Cpassword = () => {
             });
 
             const data = await response.json();
-            if (response.status === 200) {
+            if (response.status === 200 || !data) {
                 console.log('Password changed successfully!');
+                toast.success("Password changed successfully!");
 
-            } else if (response.status === 400 || !data) {
+
+                setFormData({
+                    currentPassword: '',
+                    newPassword: '',
+                    reenterNewPassword: ''
+                });
+
+            } else if (response.status === 500 || !data) {
                 console.error('Failed to change password');
+                toast.error("Failed to change password");
 
             }
+            else if (response.status === 400 || !data) {
+                console.error('Internal Error');
+                toast.error("Internal Error");
+
+            }
+
         } catch (error) {
             console.error('Error:', error);
 

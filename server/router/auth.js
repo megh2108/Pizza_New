@@ -810,22 +810,36 @@ router.post('/change-password', Authenticate, async (req, res) => {
     try {
         const { currentPassword, newPassword, reenterNewPassword } = req.body;
 
+        console.log(currentPassword)
+        console.log(newPassword)
+        console.log(reenterNewPassword)
+
         // Check if the new password and re-entered password match
         if (newPassword !== reenterNewPassword) {
             return res.status(400).json({ error: 'New password and re-entered password do not match.' });
         }
 
+        const userLogin = await Userss.findOne({ email: req.rootUser.email });
+        // console.log(userLogin);
+
         // Check if the current password is correct
-        const isMatch = await bcrypt.compare(currentPassword, req.Userss.cpassword); // Use cpassword here
+        console.log("database password",userLogin.password)
+        const isMatch = await bcrypt.compare(currentPassword,userLogin.password); // Use cpassword here
+        console.log("match", isMatch);
 
         if (!isMatch) {
             return res.status(400).json({ error: 'Current password is incorrect.' });
         }
 
         // Update the password
-        req.Userss.password = newPassword;
-        req.Userss.cpassword = await bcrypt.hash(newPassword, 12);
-        await req.Userss.save();
+        // req.Userss.password = newPassword;
+        // req.Userss.cpassword = await bcrypt.hash(newPassword, 12);
+        // await req.Userss.save();
+
+        // Update the password
+        userLogin.password = newPassword;
+        userLogin.cpassword = await bcrypt.hash(newPassword, 12);
+        await userLogin.save();
 
         res.status(200).send({ message: 'Password changed successfully.' });
     } catch (error) {
