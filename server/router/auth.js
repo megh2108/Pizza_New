@@ -4,6 +4,17 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const Authenticate = require("../middleware/Authenticate");
 const stripe = require("stripe")("sk_test_51NxuORSJjSNbQ9dejfeD3JHuIt1vy77zvDfMfwMpUyOeYonEVQ2phNoaQL0HODA7kT6EDKMPUAYDCJA5X7eMefDc00WI9Wjuwy")
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: 'meghshah0410@gmail.com',
+        pass: 'dlqt mqqp oobu cxok',
+    },
+});
 
 
 require('../db/conn');
@@ -297,8 +308,8 @@ router.get('/getorder', async (req, res) => {
 
         const response = {
             orderDates: orderDates,
-            Order_Record:Order_Record
-         
+            Order_Record: Order_Record
+
         };
 
         // const userOrderDetails = await OrderDetail.find({ orderID: orderId });
@@ -313,14 +324,14 @@ router.get('/getorder', async (req, res) => {
 router.get('/getUser/:userID', async (req, res) => {
     try {
         const userID = req.params.userID;
-        
+
         // Find the shop based on shopID
         const user = await Userss.findOne({ _id: userID });
-        
+
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-        
+
         // Extract the shop name from the shop document
         const userName = user.name;
         // console.log(userName);
@@ -336,7 +347,7 @@ router.get('/getUser/:userID', async (req, res) => {
 router.get('/getShop/:shopID', async (req, res) => {
     try {
         const shopID = req.params.shopID;
-        
+
         // Find the shop based on shopID
         const shop = await Shop.findOne({ _id: shopID });
 
@@ -361,11 +372,11 @@ router.get('/getorderdetail', async (req, res) => {
     try {
         const Order_Detail = await OrderDetail.find({});
 
-       
+
 
         res.json(Order_Detail);
 
-        
+
     } catch (err) {
         console.error('Error fetching data:', err);
         res.status(500).json({ error: 'Internal server error' });
@@ -385,9 +396,37 @@ router.put('/updateOrderStatus/:orderId', async (req, res) => {
             { new: true }
         );
 
+        const orderDetail = await Order.findOne({ _id: orderId })
+
+        console.log("Details :", orderDetail);
+
+        const userDetail = await Userss.findOne({ _id: orderDetail.userID })
+        console.log("User Emails :", userDetail.email);
+
         if (!updatedOrder) {
             return res.status(404).json({ error: 'Order not found' });
         }
+
+        const userEmail = userDetail.email; // replace with the user's email
+        const subject = "Order Status Update";
+        const text = `Your order with ID ${orderId} has been updated to ${orderStatus}.`;
+
+        console.log("useremail :", userEmail);
+        const mailOptions = {
+            from: 'meghshah0410@gmail.com', // replace with your Gmail email
+            to: userEmail,
+            subject: subject,
+            text: text,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+            } else {
+                console.log('Email sent:', info.response);
+            }
+            console.log("mail transfer");
+        });
 
         res.status(200).json(updatedOrder);
     } catch (error) {
@@ -421,7 +460,7 @@ router.get('/getpizza', async (req, res) => {
 
 //         console.log(carts);
 
-        
+
 //         res.json(carts);
 //     } catch (err) {
 //         console.error('Error fetching data:', err);
@@ -657,7 +696,7 @@ router.post('/addTopping', Authenticate, async (req, res) => {
     }
 });
 
-router.get('/admin', Authenticate,async (req, res) => {
+router.get('/admin', Authenticate, async (req, res) => {
     console.log(`Hello Admin`);
 
     const userId = req.rootUser._id;
@@ -688,14 +727,14 @@ router.get('/logout', (req, res) => {
 //   });
 
 router.put('/updateQuantity/:itemId', async (req, res) => {
-  
+
     try {
-        const {itemId} = req.params;
-        console.log("Item:",itemId)
-        const {newQuantity} = req.body;
+        const { itemId } = req.params;
+        console.log("Item:", itemId)
+        const { newQuantity } = req.body;
 
         const cart = await Cart.findOne({ 'items._id': itemId });
-        console.log("cart:",cart)
+        console.log("cart:", cart)
 
         if (!cart) {
             return res.status(404).json({ error: 'Cart not found' });
@@ -725,23 +764,23 @@ router.put('/updateQuantity/:itemId', async (req, res) => {
 router.delete('/removeFromCart/:itemId', async (req, res) => {
     try {
         const { itemId } = req.params;
-        
-       // Use Mongoose to find and delete the item by its unique _id
-       const deletedItem = await CartItem.findByIdAndDelete(itemId);
 
-       if (!deletedItem) {
-           return res.status(404).json({ error: 'Item not found' });
-       }
+        // Use Mongoose to find and delete the item by its unique _id
+        const deletedItem = await CartItem.findByIdAndDelete(itemId);
 
-       return res.status(200).json({ message: 'Item removed successfully' });
-   } catch (error) {
-       console.error('Error removing item:', error.message);
-       return res.status(500).json({ error: 'Failed to remove the item from the cart' });
-   }
+        if (!deletedItem) {
+            return res.status(404).json({ error: 'Item not found' });
+        }
+
+        return res.status(200).json({ message: 'Item removed successfully' });
+    } catch (error) {
+        console.error('Error removing item:', error.message);
+        return res.status(500).json({ error: 'Failed to remove the item from the cart' });
+    }
 });
 
 //for user your order page
-router.get('/getuserorder',Authenticate, async (req, res) => {
+router.get('/getuserorder', Authenticate, async (req, res) => {
     try {
         const userId = req.rootUser._id;
 
@@ -767,7 +806,7 @@ router.get('/getuserorder',Authenticate, async (req, res) => {
         res.json(response);
 
 
-     
+
     } catch (err) {
         console.error('Error fetching data:', err);
         res.status(500).json({ error: 'Internal server error' });
@@ -823,8 +862,8 @@ router.post('/change-password', Authenticate, async (req, res) => {
         // console.log(userLogin);
 
         // Check if the current password is correct
-        console.log("database password",userLogin.password)
-        const isMatch = await bcrypt.compare(currentPassword,userLogin.password); // Use cpassword here
+        console.log("database password", userLogin.password)
+        const isMatch = await bcrypt.compare(currentPassword, userLogin.password); // Use cpassword here
         console.log("match", isMatch);
 
         if (!isMatch) {
@@ -837,7 +876,7 @@ router.post('/change-password', Authenticate, async (req, res) => {
         // await req.Userss.save();
 
         // Update the password
-        userLogin.password = newPassword;
+        userLogin.password = await bcrypt.hash(newPassword, 12);
         userLogin.cpassword = await bcrypt.hash(newPassword, 12);
         await userLogin.save();
 
