@@ -227,7 +227,11 @@ router.post('/addtocart', Authenticate, async (req, res) => {
 //for placed order
 router.post('/order', Authenticate, async (req, res) => {
     try {
+
+        console.log("Call /order api")
         const userId = req.rootUser._id;
+
+        const userDetail = await Userss.findOne({_id :userId});
 
         const cart = await Cart.findOne({ userID: userId });
 
@@ -267,6 +271,66 @@ router.post('/order', Authenticate, async (req, res) => {
         });
 
         await orderDetails.save();
+
+        const userEmail = req.rootUser.email; // replace with the user's email
+        const subject = "Order has been placed successfully";
+        // const text = `Your order with ID ${orderId} has been updated to ${orderStatus}.`;
+
+        const itemHtml = cart.items.map(item => {
+            return `
+                <tr>
+                    <td>${item.itemName}</td>
+                    <td>${item.size}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.price}</td>
+                    <td>${item.totalPrice}</td>
+                </tr>
+            `;
+        }).join('');
+        
+// console.log(itemsHtml)
+        
+        const html =`<h2>Hello ${userDetail.name}</h2>
+                    <h3>Your order with ID ${order._id} has been successfull placed.</h3>
+                    <h3>Please Pick up your order within 30 minites.</h3> 
+                    <h4>Order Details:</h4>
+                    <table border="1" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Size</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${itemHtml}
+                        </tbody>                       
+                    </table>
+
+                    <h3>Total Amount :${totalAmount}</h3>
+                    `;
+
+
+        console.log("useremail :", userEmail);
+        const mailOptions = {
+            from: 'meghshah0410@gmail.com', // replace with your Gmail email
+            to: userEmail,
+            subject: subject,
+            // text: text,
+            html:html,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+            } else {
+                console.log('Email sent:', info.response);
+            }
+            console.log("mail transfer");
+        });
+
 
         // Remove items from the cart
         cart.items = [];
@@ -428,7 +492,7 @@ router.put('/updateOrderStatus/:orderId', async (req, res) => {
         
         const html =`<h2>Hello ${userDetail.name}</h2>
                     <h3>Your order with ID ${orderId} has been updated to ${orderStatus}.</h3>
-                    <h3>Please Pick up your order within minuts.</h3> 
+                    <h3>Please Pick up your order within 10 minites.</h3> 
                     <h4>Order Details:</h4>
                     <table border="1" class="table table-bordered">
                         <thead>
