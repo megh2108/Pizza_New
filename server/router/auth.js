@@ -398,7 +398,10 @@ router.put('/updateOrderStatus/:orderId', async (req, res) => {
 
         const orderDetail = await Order.findOne({ _id: orderId })
 
-        console.log("Details :", orderDetail);
+        // console.log("Details :", orderDetail);
+
+        const extraDetail = await OrderDetail.findOne({orderID : orderId})
+        console.log("Order extra detail",extraDetail)
 
         const userDetail = await Userss.findOne({ _id: orderDetail.userID })
         console.log("User Emails :", userDetail.email);
@@ -409,14 +412,49 @@ router.put('/updateOrderStatus/:orderId', async (req, res) => {
 
         const userEmail = userDetail.email; // replace with the user's email
         const subject = "Order Status Update";
-        const text = `Your order with ID ${orderId} has been updated to ${orderStatus}.`;
+        // const text = `Your order with ID ${orderId} has been updated to ${orderStatus}.`;
+
+        const itemsHtml = extraDetail.items.map(item => {
+            return `
+                <tr>
+                    <td>${item.itemName}</td>
+                    <td>${item.size}</td>
+                    <td>${item.quantity}</td>
+                </tr>
+            `;
+        }).join('');
+        
+// console.log(itemsHtml)
+        
+        const html =`<h2>Hello ${userDetail.name}</h2>
+                    <h3>Your order with ID ${orderId} has been updated to ${orderStatus}.</h3>
+                    <h3>Please Pick up your order within minuts.</h3> 
+                    <h4>Order Details:</h4>
+                    <table border="1" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Size</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${itemsHtml}
+                        </tbody>
+                    </table>
+
+                    <h3>Total Amount :${orderDetail.totalAmount}</h3>
+                    <h3>Payment Status :${orderDetail.paymentStatus}</h3>
+                    `;
+
 
         console.log("useremail :", userEmail);
         const mailOptions = {
             from: 'meghshah0410@gmail.com', // replace with your Gmail email
             to: userEmail,
             subject: subject,
-            text: text,
+            // text: text,
+            html:html,
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
