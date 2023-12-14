@@ -10,10 +10,13 @@ const Addoffer = () => {
     const [updateMode, setUpdateMode] = useState(false);
     const [itemIdToUpdate, setItemIdToUpdate] = useState(null);
 
-    const [offername, setOfferName] = useState('');
-    const [shopid, setShopid] = useState('');
-    const [discount, setDiscount] = useState('');
-    const [active, setActive] = useState('');
+    const [offer, setOffer] = useState([]);
+
+
+    const [offerName, setOfferName] = useState('');
+    const [shopID, setShopid] = useState('');
+    const [discountPercentage, setDiscount] = useState('');
+    const [isActive, setActive] = useState('');
     const [items, setItems] = useState([]);
 
 
@@ -56,10 +59,10 @@ const Addoffer = () => {
                 Accept: "application/json",
             },
             body: JSON.stringify({
-                shopid,
-                offername,
-                discount,
-                active
+                shopID,
+                offerName,
+                discountPercentage,
+                isActive
             }),
         });
 
@@ -90,19 +93,19 @@ const Addoffer = () => {
 
     const handleCancelUpdate = () => {
         setActive('');
-                setDiscount('');
-                setShopid('');
-                setOfferName('');
+        setDiscount('');
+        setShopid('');
+        setOfferName('');
         setUpdateMode(false);
         setItemIdToUpdate(null);
     };
 
     const handleUpdateItem = async () => {
         const updatePayload = {
-            shopid,
-                offername,
-                discount,
-                active
+            shopID,
+            offerName,
+            discountPercentage,
+            isActive
         };
 
         try {
@@ -148,6 +151,55 @@ const Addoffer = () => {
         }
     };
 
+    const handleDelete = async (itemId) => {
+        try {
+            const response = await fetch(`/deleteOffer/${itemId}`, {
+                method: "DELETE"
+            });
+
+            if (response.status === 200) {
+                console.log("Offer deleted successfully");
+                toast.success("Offer deleted successfully");
+
+                setItems((prevItems) => prevItems.filter((item) => item._id !== itemId));
+            } else {
+                console.log("Failed to delete Offer");
+                toast.error("Failed to delete Offer");
+            }
+        } catch (error) {
+            console.error("Error deleting Offer:", error);
+        }
+    };
+
+
+    const handleStatusChange = async (itemId, newStatus) => {
+        try {
+            const response = await fetch(`/updateOfferStatus/${itemId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+                body: JSON.stringify({ isActive: newStatus }),
+            });
+
+            if (response.status === 200) {
+                console.log(`Offer status updated to ${newStatus}`);
+                toast.success(`Offer status updated to ${newStatus}`);
+
+                setOffer((prevOffer) =>
+                    prevOffer.map((offer) =>
+                        offer._id === itemId ? { ...offer, isActive: newStatus } : offer
+                    )
+                );
+            } else {
+                console.log("Failed to update order status");
+                toast.error("Failed to update order status");
+            }
+        } catch (error) {
+            console.error("Error updating order status:", error);
+        }
+    };
 
     return (
         <>
@@ -172,39 +224,39 @@ const Addoffer = () => {
 
                                         <div className="col-12">
                                             <label for="yourUsername" className="form-label">Shop ID</label>
-                                            <input type="text" name="shopid" className="form-control" id="yourUsername" required
-                                               value={shopid}
+                                            <input type="text" name="shopID" className="form-control" id="yourUsername" required
+                                                value={shopID}
                                                 onChange={(e) => setShopid(e.target.value)} />
                                         </div>
                                         <div className="col-12">
                                             <label for="yourUsername" className="form-label">Offer Name</label>
-                                            <input type="text" name="offername" className="form-control" id="yourUsername" required
-                                               value={offername}
+                                            <input type="text" name="offerName" className="form-control" id="yourUsername" required
+                                                value={offerName}
                                                 onChange={(e) => setOfferName(e.target.value)} />
                                         </div>
                                         <div className="col-6">
                                             <label for="yourUsername" className="form-label">Discount (%)</label>
-                                            <input type="text" name="discount" className="form-control" id="yourUsername" required
-                                                value={discount}
-                                                onChange={(e) => setDiscount(e.target.value)}/>
+                                            <input type="text" name="discountPercentage" className="form-control" id="yourUsername" required
+                                                value={discountPercentage}
+                                                onChange={(e) => setDiscount(e.target.value)} />
                                         </div>
                                         <div className="col-6">
                                             <label for="yourUsername" className="form-label">Active (true/false)</label>
-                                            <input type="text" name="active" className="form-control" id="yourUsername" required
-                                               value={active}
+                                            <input type="text" name="isActive" className="form-control" id="yourUsername" required
+                                                value={isActive}
                                                 onChange={(e) => setActive(e.target.value)} />
                                         </div>
-                                        
+
 
 
                                         {updateMode ? (
                                             <>
 
                                                 <div className="col-6">
-                                                <button className="btn btn-primary w-100" type="button" onClick={handleCancelUpdate}> Cancel Update</button>
+                                                    <button className="btn btn-primary w-100" type="button" onClick={handleCancelUpdate}> Cancel Update</button>
                                                 </div>
                                                 <div className="col-6">
-                                                <button className="btn btn-primary w-100" type="button" onClick={handleUpdateItem}> Update Offer</button>
+                                                    <button className="btn btn-primary w-100" type="button" onClick={handleUpdateItem}> Update Offer</button>
                                                 </div>
                                             </>
                                         ) : (
@@ -241,6 +293,7 @@ const Addoffer = () => {
                                                     <th scope="col">Offer Name</th>
                                                     <th scope="col">Discount(%)</th>
                                                     <th scope="col">Active</th>
+                                                    <th scope="col">Active Status</th>
                                                     <th scope="col">Update</th>
                                                     <th scope="col">Delete</th>
                                                 </tr>
@@ -252,14 +305,27 @@ const Addoffer = () => {
                                                         <th scope="row">{index + 1}</th>
                                                         <td>{item.offerName}</td>
                                                         <td>{item.discountPercentage}</td>
-                                                        <td>{item.isActive}</td>
+                                                        <td>{item.isActive.toString()}</td>
                                                         <td>
-                                                        <button className="btn btn-primary w-100" type="button" onClick={() => handleUpdate(item)}>Update</button>
+                                                            <div className="dropdown">
+                                                                <button className="btn btn-secondary dropdown-toggle" type="button" id={`statusDropdown-${item._id}`} data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                    Active Status
+                                                                </button>
+                                                                <div className="dropdown-menu" aria-labelledby={`statusDropdown-${item._id}`}>
+                                                                    <button className="dropdown-item" onClick={() => handleStatusChange(item._id, true)}>Active</button>
+                                                                    <button className="dropdown-item" onClick={() => handleStatusChange(item._id, false)}>Non-Active</button>
+
+                                                                </div>
+                                                            </div>
+                                                        </td>
+
+                                                        <td>
+                                                            <button className="btn btn-primary w-100" type="button" onClick={() => handleUpdate(item)}>Update</button>
                                                             {/* <button className="btn btn-primary w-100" type="button" onClick={() => handleUpdate(item)}>Update</button> */}
                                                         </td>
                                                         <td>
-                                                            <button className="btn btn-primary w-100" type="button" >Delete</button>
-                                                            {/* <button className="btn btn-primary w-100" type="button" onClick={() => handleDelete(item._id)}>Delete</button> */}
+                                                            {/* <button className="btn btn-primary w-100" type="button" >Delete</button> */}
+                                                            <button className="btn btn-primary w-100" type="button" onClick={() => handleDelete(item._id)}>Delete</button>
 
                                                         </td>
                                                     </tr>

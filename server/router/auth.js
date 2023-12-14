@@ -803,6 +803,8 @@ router.get('/getOfferItems', Authenticate, async (req, res) => {
     try {
         const OfferItems = await Offer.find();
 
+        console.log(OfferItems);
+
         res.status(200).json(OfferItems);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -817,20 +819,24 @@ router.post('/addOffer', Authenticate, async (req, res) => {
         const userEmail = req.rootUser.email;
         console.log("email:", userEmail)
 
-        const { shopid, offername, discount, active } = req.body;
+        const { shopID, offerName, discountPercentage, isActive } = req.body;
 
+       
         const admin = await Userss.findOne({ email: userEmail });
         // console.log("admina:", admin);
         if (!admin || admin.type !== 'admin') {
             return res.status(404).json({ error: 'Admin not found' });
         }
 
+        console.log("hello")
 
         const newItem = new Offer({
-            shopID:shopid, offerName:offername, discountPercentage:discount, isActive:active
+            shopID ,offerName, discountPercentage, isActive
         });
 
         await newItem.save();
+
+        console.log("after hello")
 
         res.status(200).json({ message: 'Offer  added successfully' });
     } catch (error) {
@@ -859,6 +865,115 @@ router.put('/updateOffer/:itemId', Authenticate, async (req, res) => {
         res.status(200).json(updatedItem);
     } catch (error) {
         console.error('Error updating topping:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+//delete offer for admin dashboard
+router.delete('/deleteOffer/:itemId', Authenticate, async (req, res) => {
+    const itemId = req.params.itemId;
+
+    try {
+        // Find and delete the topping by ID
+        const deletedOffer = await Offer.findByIdAndDelete(itemId);
+
+        if (!deletedOffer) {
+            return res.status(404).json({ message: 'Offer not found' });
+        }
+
+        res.status(200).json({ message: 'Offer deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting Offer:', error);
+        res.status(500).json({ message: 'Failed to delete Offer' });
+    }
+});
+
+
+//update offer status for admin
+router.put('/updateOfferStatus/:itemId', async (req, res) => {
+    const { isActive } = req.body;
+    const { itemId } = req.params;
+
+    try {
+        const updatedOffer = await Offer.findByIdAndUpdate(
+            itemId,
+            { $set: { isActive } },
+            { new: true }
+            );
+            res.status(200).json(updatedOffer);
+            
+        // const offerDetail = await Order.findOne({ _id: orderId })
+
+        // // console.log("Details :", orderDetail);
+
+        // const extraDetail = await OrderDetail.findOne({orderID : orderId})
+        // console.log("Order extra detail",extraDetail)
+
+        // const userDetail = await Userss.findOne({ _id: orderDetail.userID })
+        // console.log("User Emails :", userDetail.email);
+
+        // if (!updatedOrder) {
+        //     return res.status(404).json({ error: 'Order not found' });
+        // }
+
+        // const userEmail = userDetail.email; // replace with the user's email
+        // const subject = "Order Status Update";
+        // // const text = `Your order with ID ${orderId} has been updated to ${orderStatus}.`;
+
+        // const itemsHtml = extraDetail.items.map(item => {
+        //     return `
+        //         <tr>
+        //             <td>${item.itemName}</td>
+        //             <td>${item.size}</td>
+        //             <td>${item.quantity}</td>
+        //         </tr>
+        //     `;
+        // }).join('');
+        
+// console.log(itemsHtml)
+        
+        // const html =`<h2>Hello ${userDetail.name}</h2>
+        //             <h3>Your order with ID ${orderId} has been updated to ${orderStatus}.</h3>
+        //             <h3>Please Pick up your order within 10 minites.</h3> 
+        //             <h4>Order Details:</h4>
+        //             <table border="1" class="table table-bordered">
+        //                 <thead>
+        //                     <tr>
+        //                         <th>Item Name</th>
+        //                         <th>Size</th>
+        //                         <th>Quantity</th>
+        //                     </tr>
+        //                 </thead>
+        //                 <tbody>
+        //                     ${itemsHtml}
+        //                 </tbody>
+        //             </table>
+
+        //             <h3>Total Amount :${orderDetail.totalAmount}</h3>
+        //             <h3>Payment Status :${orderDetail.paymentStatus}</h3>
+        //             `;
+
+
+        // console.log("useremail :", userEmail);
+        // const mailOptions = {
+        //     from: 'meghshah0410@gmail.com', // replace with your Gmail email
+        //     to: userEmail,
+        //     subject: subject,
+        //     // text: text,
+        //     html:html,
+        // };
+
+        // transporter.sendMail(mailOptions, (error, info) => {
+        //     if (error) {
+        //         console.error('Error sending email:', error);
+        //     } else {
+        //         console.log('Email sent:', info.response);
+        //     }
+        //     console.log("mail transfer");
+        // });
+
+    } catch (error) {
+        console.error('Error updating OFFER status:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -1068,5 +1183,60 @@ router.get('/getactiveoffer', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
+//for admin sales
+router.get('/dashboard/sales', async (req, res) => {
+    try {
+        const today = new Date();
+        const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+        const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+
+        const dailySales = await Order.find({
+            orderDate: { $gte: startOfDay, $lt: endOfDay },
+        }).countDocuments();
+
+        console.log("Daily: ",dailySales);
+
+        const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+        const endOfWeek = new Date(today.setDate(startOfWeek.getDate() + 6));
+
+        const weeklySales = await Order.find({
+            orderDate: { $gte: startOfWeek, $lt: endOfWeek },
+        }).countDocuments();
+
+        console.log("Weekly: ",weeklySales);
+
+
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+        const monthlySales = await Order.find({
+            orderDate: { $gte: startOfMonth, $lt: endOfMonth },
+        }).countDocuments();
+
+        console.log("Monthly: ",monthlySales);
+
+
+        const totalSales = await Order.find({}).countDocuments();
+
+        console.log("Total: ",totalSales);
+
+    const response = {
+        daily: dailySales,
+        weekly: weeklySales,
+        monthly: monthlySales,
+        total: totalSales,
+    }
+    console.log(response);
+        res.json({
+            response
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 
 module.exports = router;

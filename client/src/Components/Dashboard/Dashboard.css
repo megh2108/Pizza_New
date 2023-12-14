@@ -8,3 +8,10 @@
         margin-left: 0;
     }
   }
+
+
+  .dcard{
+    margin: 10px;
+    width: 20%;
+    /* height: 250px; */
+  }
