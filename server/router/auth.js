@@ -798,6 +798,71 @@ router.post('/addTopping', Authenticate, async (req, res) => {
     }
 });
 
+//get item for offer in admin dashboard
+router.get('/getOfferItems', Authenticate, async (req, res) => {
+    try {
+        const OfferItems = await Offer.find();
+
+        res.status(200).json(OfferItems);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+// add offer for admin
+router.post('/addOffer', Authenticate, async (req, res) => {
+    try {
+
+        const userId = req.rootUser._id;
+        console.log("user:", userId)
+        const userEmail = req.rootUser.email;
+        console.log("email:", userEmail)
+
+        const { shopid, offername, discount, active } = req.body;
+
+        const admin = await Userss.findOne({ email: userEmail });
+        // console.log("admina:", admin);
+        if (!admin || admin.type !== 'admin') {
+            return res.status(404).json({ error: 'Admin not found' });
+        }
+
+
+        const newItem = new Offer({
+            shopID:shopid, offerName:offername, discountPercentage:discount, isActive:active
+        });
+
+        await newItem.save();
+
+        res.status(200).json({ message: 'Offer  added successfully' });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+
+//update offer for admin dashboard
+router.put('/updateOffer/:itemId', Authenticate, async (req, res) => {
+    const { itemId } = req.params;
+    const updateData = req.body;
+
+    try {
+        // Find the topping by ID and update it
+        const updatedItem = await Offer.findByIdAndUpdate(
+            itemId,
+            updateData,
+            { new: true } // Return the updated topping
+        );
+
+        if (!updatedItem) {
+            return res.status(404).json({ error: 'Offer not found' });
+        }
+
+        res.status(200).json(updatedItem);
+    } catch (error) {
+        console.error('Error updating topping:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 router.get('/admin', Authenticate, async (req, res) => {
     console.log(`Hello Admin`);
 
@@ -986,6 +1051,21 @@ router.post('/change-password', Authenticate, async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send({ error: 'Internal Server Error' });
+    }
+});
+
+router.get('/getactiveoffer', async (req, res) => {
+    try {
+        
+        const activeOffers = await Offer.find({ isActive: true });
+        console.log("offer:", activeOffers);
+
+        res.json(activeOffers);
+
+       
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 

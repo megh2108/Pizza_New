@@ -31,6 +31,7 @@ import Dashboard from './Components/Dashboard/Dashboard';
 import Yourorder from './Components/Yourorder/Yourorder';
 import Userdetail from './Components/Userdetail/Userdetail';
 import Cpassword from './Components/ChangePassword/Cpassword';
+import Addoffer from './Components/Addoffer/Addoffer';
 
 export const UserContext = createContext();
 
@@ -49,6 +50,7 @@ function App() {
         <Routes>
           <Route path="/Addpizza" element={[<Sidebar />, <Addpizza />]} />
           <Route path="/Addtopping" element={[<Sidebar />, <Addtopping />]} />
+          <Route path="/Addoffer" element={[<Sidebar />,<Addoffer />]} />
           <Route path="/Orderrecord" element={[<Sidebar />, <Orderrecord />]} />
           <Route path="/Orderdetail" element={[<Sidebar />, <Orderdetail />]} />
           <Route path="/Userdetail" element={[<Sidebar />, <Userdetail />]} />

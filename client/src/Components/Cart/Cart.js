@@ -11,9 +11,11 @@ const Cart = () => {
     const [toppings, setToppings] = useState([]);
     const [userData, setUserData] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0); 
-    
+    const [disPrice, setDisPrice] = useState(0); 
+    const [disAmount, setDisAmount] = useState(0); 
+    const [activeOffer, setActiveOffer] = useState([]);
 
-  
+    
 
     const callGetCart = async () => {
         try {
@@ -46,6 +48,45 @@ const Cart = () => {
         }
     };
 
+    const fetchActiveOffer = async () => {
+        try {
+            const response = await fetch('/getactiveoffer', {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
+
+            const res = await response.json();
+            console.log('Response from /getactiveoffer:', res);
+
+            if (!response.ok) {
+                const error = new Error(res.error);
+                throw error;
+            }
+
+            if (res.length > 0) {
+                // Choose the offer with the highest discount percentage
+                const maxDiscountOffer = res.reduce((maxOffer, currentOffer) => {
+                    return currentOffer.discountPercentage > maxOffer.discountPercentage ? currentOffer : maxOffer;
+                });
+    
+                setActiveOffer({
+                    offer: maxDiscountOffer,
+                    offerName: maxDiscountOffer.offerName,
+                });
+            } else {
+                // No active offers
+                setActiveOffer(null);
+            } 
+   
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     
     const fetchToppings = async () => {
         try {
@@ -60,7 +101,10 @@ const Cart = () => {
     useEffect(() => {
         callGetCart();
         fetchToppings();
+        fetchActiveOffer();
+
     }, []);
+    // console.log("Active Offer:", activeOffer);
 
     useEffect(() => {
         const newTotalPrice = cartItems.reduce((total, item) => {
@@ -68,7 +112,31 @@ const Cart = () => {
         }, 0);
 
         setTotalPrice(newTotalPrice);
+
+       
     }, [cartItems]);
+
+    useEffect(() => {
+        console.log("Active Offer:", activeOffer);
+        console.log("Total Price:", totalPrice);
+    
+        if (activeOffer && activeOffer.offer) {
+            const discountAmount = (totalPrice * activeOffer.offer.discountPercentage) / 100;
+            const discountedPrice = totalPrice - discountAmount;
+    
+            console.log("Discount Amount:", discountAmount);
+            console.log("Discounted Price:", discountedPrice);
+    
+            setDisAmount(discountAmount);
+            setDisPrice(discountedPrice);
+        } else {
+            console.log("No Active Offer");
+            // If there is no active offer, reset the discount values
+            setDisAmount(0);
+            setDisPrice(0);
+        }
+    }, [activeOffer, totalPrice]);
+
 
     const callMenuPage = async () => {
         try {
@@ -155,6 +223,8 @@ const Cart = () => {
 
     }
 
+    
+
 
 
     return (
@@ -225,19 +295,20 @@ const Cart = () => {
                                 <table class="table table-bordered ">
                                     <tbody>
                                         <tr>
-                                            <td>Total Price</td>
+                                            <td colSpan={2}>Total Price</td>
                                             <td>{totalPrice}</td>
                                         </tr>
                                         <tr>
-                                            <td>Discount Price</td>
-                                            <td>0</td>
+                                            <td>{activeOffer.offerName} Offer</td>
+                                            <td>Discount Amount</td>
+                                            <td>{disAmount}</td>
                                         </tr>
                                         <tr>
-                                            <td>Total Price</td>
-                                            <td>{totalPrice}</td>
+                                            <td colSpan={2}>Discount Price</td>
+                                            <td>{disPrice}</td>
                                         </tr>
                                         <tr>
-                                            <td colSpan={2}> <button class="btn btn-primary" onClick={placeOrder}>Placed Order</button> </td>
+                                            <td colSpan={3}> <button class="btn btn-primary" onClick={placeOrder}>Placed Order</button> </td>
                                         </tr>
 
 

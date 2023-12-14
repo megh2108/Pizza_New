@@ -28,6 +28,12 @@ const Sidebar = () => {
                         </NavLink>
                     </li>
                     <li class="nav-item">
+                        <NavLink class="nav-link " to="/Addoffer">
+                            <i class="bi bi-grid"></i>
+                            <span class="span">Add Offers</span>
+                        </NavLink>
+                    </li>
+                    <li class="nav-item">
                         <NavLink class="nav-link " to="/Orderrecord">
                             <i class="bi bi-grid"></i>
                             <span class="span">Order Records</span>
