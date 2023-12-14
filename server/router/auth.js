@@ -228,6 +228,11 @@ router.post('/addtocart', Authenticate, async (req, res) => {
 router.post('/order', Authenticate, async (req, res) => {
     try {
 
+        const { discountPrice  } = req.body;
+
+        console.log(discountPrice);
+
+
         console.log("Call /order api")
         const userId = req.rootUser._id;
 
@@ -251,7 +256,7 @@ router.post('/order', Authenticate, async (req, res) => {
             userID: userId,
             shopID: cart.shopID,
             orderDate: new Date(),
-            totalAmount: totalAmount,
+            totalAmount: discountPrice,
             orderStatus: 'Pending',
             paymentStatus: 'Pending'
         });
@@ -309,7 +314,7 @@ router.post('/order', Authenticate, async (req, res) => {
                         </tbody>                       
                     </table>
 
-                    <h3>Total Amount :${totalAmount}</h3>
+                    <h3>Total Amount :${discountPrice}</h3>
                     `;
 
 
@@ -1102,7 +1107,7 @@ router.get('/getuserorder', Authenticate, async (req, res) => {
 
 //for payment gateway
 router.post('/create-checkout-session', async (req, res) => {
-    const { products } = req.body;
+    const { products,discountPrice } = req.body;
 
     const lineItems = products.map((product) => ({
         price_data: {

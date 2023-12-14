@@ -172,7 +172,8 @@ const Cart = () => {
         const stripe = await loadStripe("pk_test_51NxuORSJjSNbQ9depnPh6Xjoaa9mKEKutlw3t2yWEZiT2DuCeJ3enVXqmaHNlg6kpXh0bbNFOgbw2232Mj2l0Rf200r3oVFkcD");
 
         const body = {
-            products: cartItems
+            products: cartItems,
+            discountPrice: disPrice
         };
 
         const answer = await fetch('/create-checkout-session', {
@@ -181,6 +182,7 @@ const Cart = () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(body),
+            
         });
 
         const session = await answer.json();
@@ -199,6 +201,8 @@ const Cart = () => {
                         'Content-Type': 'application/json',
                     },
                     credentials: 'include',
+                    body: JSON.stringify({ discountPrice: disPrice }) // Include disPrice in the request body
+
                 });
 
                 const data = await response.json();
