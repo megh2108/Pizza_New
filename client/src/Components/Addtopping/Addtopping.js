@@ -17,6 +17,27 @@ const Addtopping = () => {
     const [itemIdToUpdate, setItemIdToUpdate] = useState(null);
 
     useEffect(() => {
+        fetch('/admin', {
+            method: "GET",
+            headers: {
+                Accept: "appllication/json",
+                "Content-Type": "application/json"
+            },
+            credentials: "include"
+
+        }).then((res) => {
+            // dispatch({ type: "USER", payload: false })
+            if (res.status === 404) {
+                navigate('/');
+
+            }
+        }).catch((err) => {
+            console.log(err);
+        });
+    });
+
+
+    useEffect(() => {
 
         fetch("/getItemsss", {
             method: "GET",

@@ -8,6 +8,9 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Addpizza = () => {
 
+    const navigate = useNavigate();
+
+
     const [currentPage, setCurrentPage] = useState(1);
     const [items, setItems] = useState([]);
     const [updateMode, setUpdateMode] = useState(false);
@@ -23,7 +26,25 @@ const Addpizza = () => {
         image: ""
     });
 
-    const navigate = useNavigate();
+    useEffect(() => {
+        fetch('/admin', {
+            method: "GET",
+            headers: {
+                Accept: "appllication/json",
+                "Content-Type": "application/json"
+            },
+            credentials: "include"
+
+        }).then((res) => {
+            // dispatch({ type: "USER", payload: false })
+            if (res.status === 404) {
+                navigate('/');
+
+            }
+        }).catch((err) => {
+            console.log(err);
+        });
+    });
 
 
     useEffect(() => {

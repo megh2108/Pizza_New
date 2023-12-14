@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Navigate, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import './Dashboard.css'
 
 
@@ -40,7 +40,7 @@ const Dashboard = () => {
         }).then((res) => {
             // dispatch({ type: "USER", payload: false })
             if (res.status === 404) {
-                navigate('/Menu');
+                navigate('/');
 
             }
         }).catch((err) => {

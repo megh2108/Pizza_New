@@ -4,6 +4,7 @@ const Yourorder = () => {
 
     const [userOrders, setUserOrders] = useState([]);
     const [orderDates, setOrderDates] = useState([]);
+    const [orderStatus, setOrderStatus] = useState([]);
     const [loading, setLoading] = useState(true);
 
 
@@ -21,6 +22,7 @@ const Yourorder = () => {
             const res = await response.json();
             setUserOrders(res.userOrderDetails);
             setOrderDates(res.orderDates);
+            setOrderStatus(res.orderStatus.reverse());
             setLoading(false);
 
             console.log(res);
@@ -52,6 +54,7 @@ const Yourorder = () => {
                         {userOrders.slice().reverse().map((order, index) => (
                             <div key={index}>
                                 <h4 style={{ "text-align": "center" }}>Date: {orderDates[userOrders.length - index - 1]}</h4>
+                                <h4 style={{ "text-align": "center" }}>Order Status: {orderStatus[index]}</h4>
                                 <table className="table table-bordered">
                                     <thead>
                                         <tr>

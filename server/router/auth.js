@@ -1067,6 +1067,10 @@ router.get('/getuserorder', Authenticate, async (req, res) => {
         const userId = req.rootUser._id;
 
         const userOrders = await Order.find({ userID: userId });
+        // console.log(userOrders);
+
+        const orderStatus = userOrders.map(order => order.orderStatus);
+        // console.log(orderStatus);
 
         // console.log(userOrders);
         // res.json(userOrders);
@@ -1081,10 +1085,11 @@ router.get('/getuserorder', Authenticate, async (req, res) => {
 
         const response = {
             orderDates: orderDates,
+            orderStatus:orderStatus,
             userOrderDetails: userOrderDetails
         };
 
-        console.log(response);
+        // console.log(response);
         res.json(response);
 
 

@@ -1,11 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { DataTable } from 'simple-datatables';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Orderdetails = () => {
+    const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
 
+
+    useEffect(() => {
+        fetch('/admin', {
+            method: "GET",
+            headers: {
+                Accept: "appllication/json",
+                "Content-Type": "application/json"
+            },
+            credentials: "include"
+
+        }).then((res) => {
+            // dispatch({ type: "USER", payload: false })
+            if (res.status === 404) {
+                navigate('/');
+
+            }
+        }).catch((err) => {
+            console.log(err);
+        });
+    });
 
     useEffect(() => {
         fetch("/getorderdetail", {
