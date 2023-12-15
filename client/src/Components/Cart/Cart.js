@@ -190,6 +190,8 @@ const Cart = () => {
             sessionId: session.id
         });
 
+        
+
 
 
         if (result) {
@@ -323,7 +325,7 @@ const Cart = () => {
                                                     class="img-fluid rounded-start"
                                                     alt="..." style={{ "height": "150px", "width": "150px" }}
                                                 /></td>
-                                                
+
                                                 <td>{item.itemName}</td>
                                                 <td>{item.size}</td>
                                                 <td>{item.price}</td>

@@ -258,7 +258,7 @@ router.post('/order', Authenticate, async (req, res) => {
             orderDate: new Date(),
             totalAmount: discountPrice,
             orderStatus: 'Pending',
-            paymentStatus: 'Pending'
+            paymentStatus: 'Completed'
         });
 
         console.log(order.shopID);
