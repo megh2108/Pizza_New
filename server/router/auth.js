@@ -584,24 +584,10 @@ router.get('/getcart', Authenticate, async (req, res) => {
 
         const carts = await Cart.findOne({ userID: userId });
 
-        // if (carts) {
-        //     const itemNames = carts.items.map(item => item.itemName);
-        //     console.log("Item Names:", itemNames);
-        //     // res.json(itemNames);
-
-        //     const itemDetails = await PizzaMenuItem.findOne({ itemName: itemNames });
-
-        //     const response = {
-        //         carts:carts,
-        //         itemDetails:itemDetails
-        //     }
-        // res.json(response);
+       
         res.json(carts);
 
-        // } else {
-        //     console.log("Cart not found for the user.");
-        //     res.status(404).json({ error: 'Cart not found' });
-        // }
+      
     } catch (err) {
         console.error('Error fetching data:', err);
         res.status(500).json({ error: 'Internal server error' });
@@ -907,76 +893,7 @@ router.put('/updateOfferStatus/:itemId', async (req, res) => {
             );
             res.status(200).json(updatedOffer);
             
-        // const offerDetail = await Order.findOne({ _id: orderId })
-
-        // // console.log("Details :", orderDetail);
-
-        // const extraDetail = await OrderDetail.findOne({orderID : orderId})
-        // console.log("Order extra detail",extraDetail)
-
-        // const userDetail = await Userss.findOne({ _id: orderDetail.userID })
-        // console.log("User Emails :", userDetail.email);
-
-        // if (!updatedOrder) {
-        //     return res.status(404).json({ error: 'Order not found' });
-        // }
-
-        // const userEmail = userDetail.email; // replace with the user's email
-        // const subject = "Order Status Update";
-        // // const text = `Your order with ID ${orderId} has been updated to ${orderStatus}.`;
-
-        // const itemsHtml = extraDetail.items.map(item => {
-        //     return `
-        //         <tr>
-        //             <td>${item.itemName}</td>
-        //             <td>${item.size}</td>
-        //             <td>${item.quantity}</td>
-        //         </tr>
-        //     `;
-        // }).join('');
-        
-// console.log(itemsHtml)
-        
-        // const html =`<h2>Hello ${userDetail.name}</h2>
-        //             <h3>Your order with ID ${orderId} has been updated to ${orderStatus}.</h3>
-        //             <h3>Please Pick up your order within 10 minites.</h3> 
-        //             <h4>Order Details:</h4>
-        //             <table border="1" class="table table-bordered">
-        //                 <thead>
-        //                     <tr>
-        //                         <th>Item Name</th>
-        //                         <th>Size</th>
-        //                         <th>Quantity</th>
-        //                     </tr>
-        //                 </thead>
-        //                 <tbody>
-        //                     ${itemsHtml}
-        //                 </tbody>
-        //             </table>
-
-        //             <h3>Total Amount :${orderDetail.totalAmount}</h3>
-        //             <h3>Payment Status :${orderDetail.paymentStatus}</h3>
-        //             `;
-
-
-        // console.log("useremail :", userEmail);
-        // const mailOptions = {
-        //     from: 'meghshah0410@gmail.com', // replace with your Gmail email
-        //     to: userEmail,
-        //     subject: subject,
-        //     // text: text,
-        //     html:html,
-        // };
-
-        // transporter.sendMail(mailOptions, (error, info) => {
-        //     if (error) {
-        //         console.error('Error sending email:', error);
-        //     } else {
-        //         console.log('Email sent:', info.response);
-        //     }
-        //     console.log("mail transfer");
-        // });
-
+       
     } catch (error) {
         console.error('Error updating OFFER status:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -1001,6 +918,51 @@ router.get('/admin', Authenticate, async (req, res) => {
 router.get('/Cart', Authenticate, (req, res) => {
     console.log(`Hello my About`);
     res.send(req.rootUser);
+});
+
+//delete item from cart
+router.delete('/deleteCartItem/:itemId', async (req, res) => {
+    const itemId = req.params.itemId;
+
+    try {
+        // Find and remove the item from the cart
+        const result = await Cart.updateOne(
+            { 'items._id': itemId },
+            { $pull: { items: { _id: itemId } } }
+        );
+
+        if (result.nModified === 0) {
+            return res.status(404).json({ error: 'Item not found in the cart' });
+        }
+
+        res.json({ message: 'Item deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting item:', error.message);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+//uopdate quantity in cart
+router.patch('/updateCartItemQuantity/:itemId', async (req, res) => {
+    const itemId = req.params.itemId;
+    const { quantity } = req.body;
+
+    try {
+        // Find and update the quantity of the item in the cart
+        const result = await Cart.updateOne(
+            { 'items._id': itemId },
+            { $set: { 'items.$.quantity': quantity } }
+        );
+
+        if (result.nModified === 0) {
+            return res.status(404).json({ error: 'Item not found in the cart' });
+        }
+
+        res.json({ message: 'Quantity updated successfully' });
+    } catch (error) {
+        console.error('Error updating quantity:', error.message);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 router.get('/logout', (req, res) => {

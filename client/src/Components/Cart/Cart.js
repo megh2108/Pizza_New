@@ -10,12 +10,12 @@ const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [toppings, setToppings] = useState([]);
     const [userData, setUserData] = useState([]);
-    const [totalPrice, setTotalPrice] = useState(0); 
-    const [disPrice, setDisPrice] = useState(0); 
-    const [disAmount, setDisAmount] = useState(0); 
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [disPrice, setDisPrice] = useState(0);
+    const [disAmount, setDisAmount] = useState(0);
     const [activeOffer, setActiveOffer] = useState([]);
 
-    
+
 
     const callGetCart = async () => {
         try {
@@ -72,7 +72,7 @@ const Cart = () => {
                 const maxDiscountOffer = res.reduce((maxOffer, currentOffer) => {
                     return currentOffer.discountPercentage > maxOffer.discountPercentage ? currentOffer : maxOffer;
                 });
-    
+
                 setActiveOffer({
                     offer: maxDiscountOffer,
                     offerName: maxDiscountOffer.offerName,
@@ -80,14 +80,14 @@ const Cart = () => {
             } else {
                 // No active offers
                 setActiveOffer(null);
-            } 
-   
+            }
+
         } catch (err) {
             console.error(err);
         }
     };
 
-    
+
     const fetchToppings = async () => {
         try {
             const response = await fetch('/gettoppings');
@@ -113,20 +113,20 @@ const Cart = () => {
 
         setTotalPrice(newTotalPrice);
 
-       
+
     }, [cartItems]);
 
     useEffect(() => {
         console.log("Active Offer:", activeOffer);
         console.log("Total Price:", totalPrice);
-    
+
         if (activeOffer && activeOffer.offer) {
             const discountAmount = (totalPrice * activeOffer.offer.discountPercentage) / 100;
             const discountedPrice = totalPrice - discountAmount;
-    
+
             console.log("Discount Amount:", discountAmount);
             console.log("Discounted Price:", discountedPrice);
-    
+
             setDisAmount(discountAmount);
             setDisPrice(discountedPrice);
         } else {
@@ -182,7 +182,7 @@ const Cart = () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(body),
-            
+
         });
 
         const session = await answer.json();
@@ -227,7 +227,59 @@ const Cart = () => {
 
     }
 
-    
+    const handleDelete = async (itemId) => {
+        try {
+            // Make a DELETE request to your backend endpoint to delete the item
+            const response = await fetch(`/deleteCartItem/${itemId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to delete item');
+            }
+
+            // Refresh the cart after successful deletion
+            callGetCart();
+        } catch (error) {
+            console.error('Error deleting item:', error.message);
+            toast.error('Item not deleted successfully');
+        }
+    };
+
+    const handleQuantityChange = async (itemId, newQuantity) => {
+        newQuantity = Math.max(newQuantity, 1);
+
+        try {
+            // Make a PATCH request to your backend endpoint to update the quantity
+            const response = await fetch(`/updateCartItemQuantity/${itemId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ quantity: newQuantity }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to update quantity');
+            }
+
+            // Refresh the cart after successful update
+            callGetCart();
+        } catch (error) {
+            console.error('Error updating quantity:', error.message);
+            toast.error('Quantity not updated successfully');
+        }
+    };
+
 
 
 
@@ -256,6 +308,8 @@ const Cart = () => {
                                             <th scope="col">Price</th>
                                             <th scope="col">Qty</th>
                                             <th scope="col">Total Price</th>
+                                            <th scope="col">Actions</th>
+
 
                                         </tr>
                                     </thead>
@@ -269,10 +323,19 @@ const Cart = () => {
                                                     class="img-fluid rounded-start"
                                                     alt="..." style={{ "height": "150px", "width": "150px" }}
                                                 /></td>
+                                                
                                                 <td>{item.itemName}</td>
                                                 <td>{item.size}</td>
                                                 <td>{item.price}</td>
-                                                <td style={{"display":"flex"}}> <button type="button" class="btn btn-outline-primary" id="qty">-</button>
+
+                                                <td style={{ display: "flex" }}>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-primary"
+                                                        onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
+                                                    >
+                                                        -
+                                                    </button>
                                                     <input
                                                         type="text"
                                                         name="quantity"
@@ -281,8 +344,25 @@ const Cart = () => {
                                                         value={item.quantity}
                                                         readOnly
                                                     />
-                                                    <button type="button" class="btn btn-outline-primary" id="qty">+</button></td>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-primary"
+                                                        onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
+                                                    >
+                                                        +
+                                                    </button>
+                                                </td>
                                                 <td>{item.totalPrice}</td>
+
+                                                <td>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-danger"
+                                                        onClick={() => handleDelete(item._id)}
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </td>
 
 
                                             </tr>
