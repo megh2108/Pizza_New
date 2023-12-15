@@ -3,6 +3,10 @@ import "./Home.css";
 import { NavLink } from "react-router-dom";
 
 function Home() {
+
+  // if(window.location.reload()){
+
+  // }
   return (
     <>
 

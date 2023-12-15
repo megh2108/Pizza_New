@@ -40,6 +40,8 @@ const Cart = () => {
             const cartItemsWithDate = res.items.map((item) => ({
                 ...item,
                 dateAdded: new Date(),
+                totalPrice: item.price * item.quantity,
+
             }));
 
             setCartItems(cartItemsWithDate);
